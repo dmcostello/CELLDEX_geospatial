@@ -1,0 +1,103 @@
+Variables,Transform,Description,Source
+logk,none,Response,CELLDEX
+mean_mean_daily_temp,none,Measured water temp,CELLDEX
+NO3c,log,NO3 concentration,McDowell
+DRPc,log,DRP concentration,McDowell
+TPdep,none,TP deposition,Brahney & Mahowald
+TNdep,none,TN deposition,Ackerman
+dis_m3_pyr,log,Discharge,HydroBASINS
+dis_m3_pmn,log,Discharge,HydroBASINS
+dis_m3_pmx,log,Discharge,HydroBASINS
+run_mm_syr,none,Runoff,HydroBASINS
+inu_pc_smn,log1,Inundation extent,HydroBASINS
+inu_pc_umn,log1,Inundation extent,HydroBASINS
+inu_pc_smx,log1,Inundation extent,HydroBASINS
+inu_pc_umx,log1,Inundation extent,HydroBASINS
+inu_pc_slt,log1,Inundation extent,HydroBASINS
+inu_pc_ult,log1,Inundation extent,HydroBASINS
+lka_pc_sse,log1,Lake area,HydroBASINS
+lka_pc_use,log1,Lake area,HydroBASINS
+lkv_mc_usu,log1,Lake volume,HydroBASINS
+rev_mc_usu,log1,Reservoir volume,HydroBASINS
+dor_pc_pva,log1,Regulation,HydroBASINS
+ria_ha_ssu,log,River area,HydroBASINS
+ria_ha_usu,log,River area,HydroBASINS
+riv_tc_ssu,log,River volume,HydroBASINS
+riv_tc_usu,log,River volume,HydroBASINS
+gwt_cm_sav,none,Groundwater depth,HydroBASINS
+ele_mt_sav,log,Elevation,HydroBASINS
+ele_mt_uav,log,Elevation,HydroBASINS
+ele_mt_smn,none,Elevation,HydroBASINS
+ele_mt_smx,log,Elevation,HydroBASINS
+slp_dg_sav,xten,Slope,HydroBASINS
+slp_dg_uav,xten,Slope,HydroBASINS
+sgr_dk_sav,log,Stream gradient,HydroBASINS
+tmp_dc_syr,xten,Air temperature,HydroBASINS
+tmp_dc_uyr,xten,Air temperature,HydroBASINS
+tmp_dc_smn,xten,Air temperature,HydroBASINS
+tmp_dc_smx,xten,Air temperature,HydroBASINS
+tempmonth,xten,Air temp month of deployment,HydroBASINS
+pre_mm_syr,none,Precipitation,HydroBASINS
+pre_mm_uyr,none,Precipitation,HydroBASINS
+precipmonth,none,Precip month of deployment,HydroBASINS
+pet_mm_syr,none,Pot ET,HydroBASINS
+pet_mm_uyr,none,Pot ET,HydroBASINS
+PETmonth,none,PET month of deployment,HydroBASINS
+aet_mm_syr,none,Act ET,HydroBASINS
+aet_mm_uyr,none,Act ET,HydroBASINS
+AETmonth,none,AET month of deployment,HydroBASINS
+ari_ix_sav,xhund,Aridity,HydroBASINS
+ari_ix_uav,xhund,Aridity,HydroBASINS
+cmi_ix_syr,xhund,Moisture,HydroBASINS
+cmi_ix_uyr,xhund,Moisture,HydroBASINS
+moist_indexmonth,xhund,Moisture index month of deployment,HydroBASINS
+snw_pc_syr,none,Snow cover,HydroBASINS
+snw_pc_uyr,none,Snow cover,HydroBASINS
+snw_pc_smx,none,Snow cover,HydroBASINS
+snowmonth,none,Snow cover month of deployment,HydroBASINS
+wet_pc_sg1,none,Wetland extent - All types,HydroBASINS
+wet_pc_ug1,none,Wetland extent - All types,HydroBASINS
+wet_pc_sg2,none,"Wetland extent - No lakes, reservoirs, rivers",HydroBASINS
+wet_pc_ug2,none,"Wetland extent - No lakes, reservoirs, rivers",HydroBASINS
+for_pc_sse,none,Forest cover extent,HydroBASINS
+for_pc_use,none,Forest cover extent,HydroBASINS
+crp_pc_sse,none,Cropland extent,HydroBASINS
+crp_pc_use,none,Cropland extent,HydroBASINS
+pst_pc_sse,none,Pasture extent,HydroBASINS
+pst_pc_use,none,Pasture extent,HydroBASINS
+ire_pc_sse,none,Irrigated extent,HydroBASINS
+ire_pc_use,none,Irrigated extent,HydroBASINS
+gla_pc_sse,none,Glacier extent,HydroBASINS
+gla_pc_use,none,Glacier extent,HydroBASINS
+prm_pc_sse,none,Permafrost extent,HydroBASINS
+prm_pc_use,none,Permafrost extent,HydroBASINS
+pac_pc_sse,none,Protected area extent,HydroBASINS
+pac_pc_use,none,Protected area extent,HydroBASINS
+cly_pc_sav,none,Clay %,HydroBASINS
+cly_pc_uav,none,Clay %,HydroBASINS
+slt_pc_sav,none,Silt %,HydroBASINS
+slt_pc_uav,none,Silt %,HydroBASINS
+snd_pc_sav,none,Sand %,HydroBASINS
+snd_pc_uav,none,Sand %,HydroBASINS
+soc_th_sav,none,Organic C %,HydroBASINS
+soc_th_uav,none,Organic C %,HydroBASINS
+swc_pc_syr,none,Soil water %,HydroBASINS
+swc_pc_uyr,none,Soil water %,HydroBASINS
+soilwatermonth,none,Soil water % month of deployment,HydroBASINS
+kar_pc_sse,none,Karst extent,HydroBASINS
+kar_pc_use,none,Karst extent,HydroBASINS
+ero_kh_sav,log,Erosion rate,HydroBASINS
+ero_kh_uav,log,Erosion rate,HydroBASINS
+pop_ct_ssu,log1,Population count,HydroBASINS
+pop_ct_usu,log1,Population count,HydroBASINS
+ppd_pk_sav,log1,Population density,HydroBASINS
+ppd_pk_uav,log1,Population density,HydroBASINS
+urb_pc_sse,none,Urban extent,HydroBASINS
+urb_pc_use,none,Urban extent,HydroBASINS
+nli_ix_sav,xhund,Nighttime lights,HydroBASINS
+nli_ix_uav,xhund,Nighttime lights,HydroBASINS
+rdd_mk_sav,log1,Road density,HydroBASINS
+rdd_mk_uav,log1,Road density,HydroBASINS
+gdp_ud_sav,none,GDP average,HydroBASINS
+gdp_ud_ssu,log1,GDP sum,HydroBASINS
+gdp_ud_usu,log1,GDP sum,HydroBASINS
