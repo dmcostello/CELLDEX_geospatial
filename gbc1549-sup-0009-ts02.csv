@@ -1,0 +1,87 @@
+Latitude (N),Longitude (E),ng/m2/s,TP mg m-2 yr-1,Citation,Notes
+54.25,2.75,2.22,70.0188,"Graham and Duce, 1979",Table 4
+11,8,8.24,259.8896,"Graham and Duce, 1979",Table 5
+42.5,8.75,1.27,40.0558,"Bergametti et al., 1992",Corsica
+51,10,0.48,15.1392,"Graham and Duce, 1979",Table 4
+51,10,0.73,23.0242,"Graham and Duce, 1979",Table 4
+45,10,4.76,150.1304,"Graham and Duce, 1979",Table 4
+45.19,10.88,1.14,35.9556," Psenner, 1984; Tsuka et al., 2006 "," Piburger See, Austria "
+59.55,12.9,0.25,7.885," Persson and Broberg, 1985; Tsuka et al 2006 "," Lake Gardsjon, Sweden "
+53.25,13,1.43,45.1022," Mothes et el., 1985; Tsuka et al., 2006 "," Lake Stechlin, Germany "
+48.8,14.47,0.76,23.9704," Kopacek et al., 1997; Tsuka et al., 2006"," Rimov Reservoir, Czech Republic "
+58,14.5,0.22,6.9388,"Graham and Duce, 1979",Table 4
+49.5,14.5,0.48,15.1392," Kopacek et al., 1997; Tsuka et al., 2006 "," Slapy Reservoir, Czech Republic "
+61,15,0.86,27.1244,"Graham and Duce, 1979",Table 4
+61,15,2.22,70.0188,"Graham and Duce, 1979",Table 4
+49,17,0.13,4.1002,"Graham and Duce, 1979",Table 4
+59,18,0.63,19.8702,"Graham and Duce, 1979",Table 4
+52,19,1.9,59.926,"Graham and Duce, 1979",Table 4
+-29,32,13.64,430.2056,"Graham and Duce, 1979",Table 5
+11,76,15.22,480.0388,"Graham and Duce, 1979",Table 5
+43.5,82.5,0.86,27.1244,"Graham and Duce, 1979",Table 3
+35,135,0.77,24.2858,"Tsuka et al., 2006"," Ashiu, Japan "
+-34.5,173,0.48,15.1392,"Chen et al., 1985",New Zealand
+-38.5,176,0.89,28.0706,"Graham and Duce, 1979",Table 5
+-38.5,176,0.7,22.078,"Graham and Duce, 1979",Table 5
+54.5,-133.5,0.64,20.1856," Shaw et al., 1989; Tsuka et al., 2006 "," Narrow Lake, Alberta, CA"
+43,-124,0.86,27.1244,"Graham and Duce, 1979",Table 3
+47.5,-122.5,4.76,150.1304,"Graham and Duce, 1979",Table 3
+47.5,-122.5,0.95,29.963,"Graham and Duce, 1979",Table 3
+39.1,-120,0.79,24.9166,"Jassby et al.,1994",California
+35.2,-97.25,3.4,107.236," Johnson and Risser, 1974; Tsuka et al., 2006 "," Lake Thunderbird, Oklahoma, USA "
+36.27,-97.08,1.92,60.5568," Sober and Bates, 1979; Tsuka et al., 2006 "," Lake Carl Blackwell, Oklahoma, USA "
+49.3,-93.5,1.03,32.4862," Schindler et al., 1976; Tsuka et la., 2006 "," Rawson Lake, Ontario, Canada "
+48,-92,0.44,13.8776,"Graham and Duce, 1979",Table 3
+50,-92,1.59,50.1486,"Graham and Duce, 1979",Table 3
+44.5,-90,3.17,99.9818,"Graham and Duce, 1979",Table 3
+47.5,-87,0.32,10.0928,"Graham and Duce, 1979",Table 3
+36,-87,1.74,54.8796,"Graham and Duce, 1979",Table 3
+47.5,-87,0.54,17.0316,"Graham and Duce, 1979",Table 3
+45,-87,0.7,22.078,"Graham and Duce, 1979",Table 3
+43,-87,1.14,35.9556,"Graham and Duce, 1979",Table 3
+42.8,-87,1.15,36.271," Eisenreich et al., 1977; Tsuka et al., 2006 "," Southen Basin, Lake Michigan, USA "
+45,-86.5,0.7,22.078," Eisenreich et al., 1977;Tsuka et al., 2006 "," Northern Basin,Lake Michigan, USA "
+39.1,-84.5,0.54,17.0316,"Graham and Duce, 1979",Table 3
+39.1,-84.5,2.54,80.1116,"Graham and Duce, 1979",Table 3
+35.9,-84.3,1.75,55.195," Swank and Henderson, 1976; Tsuka et al., 2006 "," Walker Branch, Tennessee, USA "
+9.91,-83.59,0.6,18.924," Hendry et al., 1984; Tsuka et al., 2006 "," Turrialba, Costa Rica "
+45,-83,0.32,10.0928,"Graham and Duce, 1979",Table 3
+48,-83,0.86,27.1244,"Graham and Duce, 1979",Table 3
+45,-83,0.82,25.8628,"Graham and Duce, 1979",Table 3
+46.5,-81,0.63,19.8702,"Graham and Duce, 1979",Table 3
+42.5,-81,1.59,50.1486,"Graham and Duce, 1979",Table 3
+36.7,-79.7,0.97,30.5938," Havens and DeCosta, 1984; Tsuka et al., 2006"," Lake O’ Woods, West Virginia, USA "
+45.15,-78.72,0.83,26.1782,"Banks and Nightswander, 2000",Ontario
+43.5,-78,1.14,35.9556,"Graham and Duce, 1979",Table 3
+35.5,-77.4,1.55,48.887," Brinson et al. 1980; Tsuka et al., 2006 "," Pitt County, North Carolina,USA "
+38.9,-76.5,1.3,41.002," Jordan et al., 1995; Tsuka et al., 2006 "," Rhode River, Maryland,USA "
+43,-76,1.27,40.0558,"Graham and Duce, 1979",Table 3
+43,-76,0.94,29.6476,"Graham and Duce, 1979",Table 3
+41.3,-74,0.38,11.9852,"Graham and Duce, 1979",Table 3
+40,-73.1,0.79,24.9166,"Graham and Duce, 1979",Table 3
+41.75,-72.75,0.13,4.1002,"Yang et al., 1996",Connecticut
+41.6,-72.75,0.12,3.7848,"Hu et al., 1998",Long Island Sound
+41.5,-71.5,0.22,6.9388,"Graham and Duce, 1979",Table 3
+10.1,-67.87,5.33,168.1082," Lewis, 1981; Tsuka et al., 2006 "," Lake Valencia, Venezuela "
+-3,-60,0.92,29.0168,"Graham and Duce, 1979",Table 5
+53.75,-25,2.54,80.1116,"Graham and Duce, 1979",Table 4
+13,-17,0.7,22.078,"Graham and Duce, 1979",Table 5
+54.5,-6.5,0.7,22.078," Gibson et al., 1995; Tsuka et al., 2006", Northern Ireland 
+54.5,-6.5,0.63,19.8702," Jordan, 1987; Tsuka et al., 2006 "," Silent Valley, Northern Ireland "
+54.5,-6.5,0.41,12.9314," Jordan, 1987; Tsuka et al., 2006 "," Altnaheglish, Northern Ireland "
+53.35,-6.29,0.73,23.0242," Jordan, 1987; Tsuka et al., 2006"," Parkgate, Ireland "
+56.5,-4.5,0.63,19.8702,"Graham and Duce, 1979",Table 4
+56.1,-4.5,1.03,32.4862," Harriman, 1978; Tsuka et al., 2006 "," Loch Ard Forest, Scotland, UK "
+54.2,-3,1.37,43.2098," Carlisle et al., 1966; Tsuka et al., 2006 "," Grizedale Forest, UK "
+54,-3,1.11,35.0094," Allen et al., 1968; Tsuka et al., 2006 "," Grizdale Forest, Lancashire,UK "
+54.05,-2.85,3.17,99.9818," Allen et al., 1968; Tsuka et al., 2006 "," Merlewood, Lancashire, UK "
+54,-2.75,1.36,42.8944,"Graham and Duce, 1979",Table 4
+54,-2.75,1.46,46.0484,"Graham and Duce, 1979",Table 4
+54,-2.75,0.79,24.9166,"Graham and Duce, 1979",Table 4
+56.97,-2.5,0.63,19.8702," Allen et al., 1968; Tsuka et al., 2006 "," Kerloch, UK "
+53.25,-2.5,2.53,79.7962," Allen et al., 1968; Tsuka et al., 2006 "," Abbot’s Moss, Cheshire, UK "
+54.75,-2.3,0.7,22.078," Gore, 1968; Tsuka et al., 2006 "," Cottage Hill, UK "
+51.5,-1.5,3.87,122.0598," Alcock and Morto, 1985; Tsuka et al., 2006 "," Crown Estate, Berkshire, UK "
+44.75,-1.25,0.16,5.0464,"Mignon and Sandroni, 1999",Mediterranean
+47.5,-1,2.85,89.889,"Graham and Duce, 1979",Table 4
+54.25,-0.6,2.53,79.7962," Allen et al., 1968; Tsuka et al., 2006 "," Silpho Moore, Yorkshire, UK "
