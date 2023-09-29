@@ -1,4 +1,4 @@
-# Packages required
+# packages required
 library(sp)
 library(raster)
 library(geodata)
@@ -7,11 +7,12 @@ library(sf)
 library(caret)
 library(gbm)
 library(pdp)
+library(tictoc)
 library(gridExtra)
 library(grid)
 
-# Set random start to reproduce published model iteration
 set.seed(15)
+tic()
 
 ###########################################
 #### Retrieve CELLDEX data from GitHub ####
@@ -191,26 +192,26 @@ for(i in 2:length(mod_vars$Variables)){
     Cdat <- cbind(Cdat,C_stb[,mod_vars$Variables[i]])
     colnames(Cdat)[i] = tempname
   } else
-    if(mod_vars$Transform[i]=="log"){
-      tempname <- paste0("log10",mod_vars$Variables[i])
-      Cdat <- cbind(Cdat,log10(C_stb[,mod_vars$Variables[i]]))
-      colnames(Cdat)[i] = tempname
-    } else
-      if(mod_vars$Transform[i]=="log1"){
-        tempname <- paste0("log10",mod_vars$Variables[i])
-        Cdat <- cbind(Cdat,log10(C_stb[,mod_vars$Variables[i]]+1))
-        colnames(Cdat)[i] = tempname
-      } else
-        if(mod_vars$Transform[i]=="xten"){
-          tempname <- mod_vars$Variables[i]
-          Cdat <- cbind(Cdat,(C_stb[,mod_vars$Variables[i]]/10))
-          colnames(Cdat)[i] = tempname
-        } else
-          if(mod_vars$Transform[i]=="xhund"){
-            tempname <- mod_vars$Variables[i]
-            Cdat <- cbind(Cdat,(C_stb[,mod_vars$Variables[i]]/100))
-            colnames(Cdat)[i] = tempname
-          } 
+  if(mod_vars$Transform[i]=="log"){
+    tempname <- paste0("log10",mod_vars$Variables[i])
+    Cdat <- cbind(Cdat,log10(C_stb[,mod_vars$Variables[i]]))
+    colnames(Cdat)[i] = tempname
+  } else
+  if(mod_vars$Transform[i]=="log1"){
+    tempname <- paste0("log10",mod_vars$Variables[i])
+    Cdat <- cbind(Cdat,log10(C_stb[,mod_vars$Variables[i]]+1))
+    colnames(Cdat)[i] = tempname
+  } else
+  if(mod_vars$Transform[i]=="xten"){
+    tempname <- mod_vars$Variables[i]
+    Cdat <- cbind(Cdat,(C_stb[,mod_vars$Variables[i]]/10))
+    colnames(Cdat)[i] = tempname
+  } else
+  if(mod_vars$Transform[i]=="xhund"){
+    tempname <- mod_vars$Variables[i]
+    Cdat <- cbind(Cdat,(C_stb[,mod_vars$Variables[i]]/100))
+    colnames(Cdat)[i] = tempname
+  } 
 }
 
 dim(Cdat) #102 total variables
@@ -241,64 +242,72 @@ head(sum,20)
 print(1-sum((Cdat$logk - predict(Cgbm, newdata=Cdat, n.trees=best.iter))^2)/
             sum((Cdat$logk - mean(Cdat$logk))^2))
 
-plot(Cgbm,i.var='tmp_dc_smx')
-
-
-###########################################
-#### Figure 1 partial dependence plots ####
-###########################################
-
-# Extract partial dependence values for top importance variables
+# Get grids of x variable values and predictions to make partial dependence plots
 drp<-plot(Cgbm,i.var='log10DRPc',return.grid=TRUE)
 pet<-plot(Cgbm,i.var='pet_mm_uyr',return.grid=TRUE)
 meantemp<-plot(Cgbm,i.var='mean_mean_daily_temp',return.grid=TRUE)
 limn<-plot(Cgbm,i.var='log10lka_pc_sse',return.grid=TRUE)
-NO3<-plot(Cgbm,i.var='log10NO3c',return.grid=TRUE)
+no3<-plot(Cgbm,i.var='log10NO3c',return.grid=TRUE)
 mntmp<-plot(Cgbm,i.var='tmp_dc_smn',return.grid=TRUE)
 
-# Create individual panels
+# Get quartiles of the x variable to mark in plots
+drprug<-as.data.frame(quantile(Cdat$log10DRPc,probs = seq(0, 1, 0.25),na.rm=T))
+colnames(drprug)[1]<-"rug"
+petrug<-as.data.frame(quantile(Cdat$pet_mm_uyr),probs = seq(0, 1, 0.25))
+colnames(petrug)[1]<-"rug"
+mtrug<-as.data.frame(quantile(Cdat$mean_mean_daily_temp),probs = seq(0, 1, 0.25))
+colnames(mtrug)[1]<-"rug"
+limnrug<-as.data.frame(quantile(Cdat$log10lka_pc_sse,probs=seq(0, 1, 0.25)))
+colnames(limnrug)[1]<-"rug"
+limnrug[2,1]<-0.01
+no3rug<-as.data.frame(quantile(Cdat$log10NO3c,probs=seq(0, 1, 0.25),na.rm=T))
+colnames(no3rug)[1]<-"rug"
+mntrug<-as.data.frame(quantile(Cdat$tmp_dc_smn,probs=seq(0, 1, 0.25),na.rm=T))
+colnames(mntrug)[1]<-"rug"
+
+# Make partial dependence plots in ggplot
 ps1<-ggplot(data = drp, aes(log10DRPc, y)) +
+  geom_point(aes(x=rug,y=min(drp$y)),drprug,color="gray",shape = 15) +
   geom_line(color = "steelblue", size = 1) +
   ylab("") + 
   xlab(expression(~log[10]~"Stream dissolved reactive P kg ha"^"-1"~"yr"^"-1")) +
-  geom_rug(sides="b",position = "jitter",color="cornflowerblue") +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
 
 ps2<-ggplot(data = pet, aes(pet_mm_uyr, y)) +
+  geom_point(aes(x=rug,y=min(pet$y)),petrug,color="gray",shape = 15) +
   geom_line(color = "steelblue", size = 1) +
   ylab("") + 
   labs(x=bquote('Upstream mean PET mm yr'^'-1')) +
-  geom_rug(sides="b",position = "jitter",color="cornflowerblue") +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
 
 ps3<-ggplot(data = meantemp, aes(mean_mean_daily_temp, y)) +
+  geom_point(aes(x=rug,y=min(meantemp$y)),mtrug,color="gray",shape = 15) +
   geom_line(color = "steelblue", size = 1) +
   ylab("") + 
-  labs(x="Mean daily stream temp C during deployment") +
-  geom_rug(sides="b",position = "jitter",color="cornflowerblue") +
+  xlab(expression(x="Mean daily stream temp during deployment "*degree*C)) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
 
 ps4<-ggplot(data = limn, aes(log10lka_pc_sse, y)) +
+  geom_point(aes(x=rug,y=min(limn$y)),limnrug,color="gray",shape = 15) +
   geom_line(color = "steelblue", size = 1) +
   ylab("") + labs(x=~log[10]~"Subwatershed lake area %") +
-  geom_rug(sides="b",position = "jitter",color="cornflowerblue") +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
 
-ps5<-ggplot(data = NO3, aes(log10NO3c, y)) +
+ps5<-ggplot(data = no3, aes(log10NO3c, y)) +
+  geom_point(aes(x=rug,y=min(no3$y)),no3rug,color="gray",shape = 15) +
   geom_line(color = "steelblue", size = 1) +
   ylab("") + 
   xlab(expression(~log[10]~"Stream NO"["2"]~"- NO"["3"]~"kg ha"^"-1"~"yr"^"-1")) +
-  geom_rug(sides="b",position = "jitter",color="cornflowerblue") +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
 
 ps6<-ggplot(data = mntmp, aes(tmp_dc_smn, y)) +
+  geom_point(aes(x=rug,y=min(mntmp$y)),mntrug,color="gray",shape = 15) +
   geom_line(color = "steelblue", size = 1) +
   ylab("") + 
-  xlab("Subwatershed minimum temperature C") +
-  geom_rug(sides="b",position = "jitter",color="cornflowerblue") +
+  xlab(expression("Subwatershed minimum temperature "*degree*C)) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
 
-# Make trellis of partial dependence plots for top 6 important variables
+# Make trellis of the top 6 partial dependence plots
 pdf(file = "stream_pdps_6.pdf",width=4,height=10)
 grid.arrange(ps1,ps2,ps3,ps4,ps5,ps6, ncol = 1,left=textGrob(bquote('ln' ~K[d]),rot=90))
 dev.off()
@@ -411,6 +420,9 @@ fs2$Leaf.condition<-factor(fs2$Leaf.condition)
 val_var <- read.csv(file="validation_variables.csv")
 Fdat <- fs2[,colnames(fs2) %in% val_var$Variables]
 
+Fdat$mesh.size.category<-as.character(Fdat$mesh.size.category)
+Fdat$Leaf.condition<-as.character(Fdat$Leaf.condition)
+
 # Run the BRT validation model
 Fgbm<- gbm(logk~., 
            data=Fdat, 
@@ -430,9 +442,5 @@ Fsum
 # Calculate pseudo-R2
 print(1-sum((Fdat$logk - predict(Fgbm, newdata=Fdat, n.trees=best.iter2))^2)/
         sum((Fdat$logk - mean(Fdat$logk))^2))
-
-plot(Fgbm,i.var='ln_pred_k')
-plot(Fgbm,i.var='mesh.size.category')
-plot(Fgbm,i.var='Leaf.condition')
 
 toc()
