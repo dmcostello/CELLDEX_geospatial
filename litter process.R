@@ -14,7 +14,7 @@ leaf2 <- merge(leaf1,leaf_cond,by='Sorting.code')
 leaf2[leaf2$Leaf.condition=="green ","Leaf.condition"] <- "green"
 
 # Simplify to just needed columns
-litter_var <- c('Long_DD','Lat_DD',
+litter_var <- c('Longitude.2','Latitude.2',
                 'Leaf.condition','mesh.size.category',
                 'Genus','k..d.','mean..ºC.','Citation','Sorting.code')
 
