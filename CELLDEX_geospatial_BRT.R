@@ -316,112 +316,104 @@ dev.off()
 #### Load and join leaf litter data ####
 ########################################
 
-# SOURCE: Follstad Shah et al. (2017) https://doi.org/10.1111/gcb.13609
-# DATA REPOSITORY: None. Received updated files from authors
-# DATA PROCESSING: (1) Calculated mean decay rates for sites with duplicate measures.
-# (2) Removed genera with <3 measures of decomposition rate.
+# SOURCE: LeRoy et al. (2020) https://doi.org/10.1111/1365-2745.13262
+# DATA REPOSITORY: https://github.com/andrew-hipp/decomposition-phylogeny-2019
+# DATA PROCESSING: See 'litter process.R'
 
-fs <- read.csv("FS2017_expanded.csv")
-fs$logk <- log(fs$kd)
-fs$mean_mean_daily_temp <- NA #### CHANGE WHEN MEAN DAILY TEMP IS ADDED TO FS DATA
+litter <- read.csv("litter_processed.csv")
+litter$logk <- log(litter$mean_kd)
 
 # Turn litter data into spatial points data frame
-fs_pts<-SpatialPointsDataFrame(fs[,c("Longitude","Latitude")],fs,
+litter_pts<-SpatialPointsDataFrame(litter[,c("longitude","latitude")],litter,
                                proj4string=CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"))
 
 # Join nutrient data at litter data locations
-merge_temp2 <- data.frame(fs_pts@data$Genus)
+merge_temp2 <- data.frame(litter_pts@data$Genus)
 for(i in 1:length(nut_data)){
-  tempdat <- raster::extract(nut_data[[i]],fs_pts,df=T)
+  tempdat <- raster::extract(nut_data[[i]],litter_pts,df=T)
   merge_temp2 <- cbind(merge_temp2,tempdat[,2])
   colnames(merge_temp2)[1+i] <- names(nut_data)[i]
 }
 
-fs_pts@data<-cbind(fs_pts@data,merge_temp2[,2:5])
+litter_pts@data<-cbind(litter_pts@data,merge_temp2[,2:5])
 
-# Convert FS points to sf object
-fs_st<-as(fs_pts,"sf")
+# Convert litter points to sf object
+litter_st<-as(litter_pts,"sf")
 
-# Transform FS spatial points to Mollweide
-fs_moll<-st_transform(fs_st,"+proj=moll")
+# Transform litter spatial points to Mollweide
+litter_moll<-st_transform(litter_st,"+proj=moll")
 
-# Spatially join FS stream points to attributes of nearest subwatershed
-fs_stb<-st_join(fs_moll, bas_moll, join = st_nearest_feature)
-fs_stb$geometry<-NULL
+# Spatially join litter stream points to attributes of nearest subwatershed
+litter_stb<-st_join(litter_moll, bas_moll, join = st_nearest_feature)
+litter_stb$geometry<-NULL
 
 # Turn -999 values (no data as represented in Hydrobasins) to NA
-fs_stb[fs_stb==-999]<-NA
+litter_stb[litter_stb==-999]<-NA
 
 # Litter database does not include time of deployment
 # All month of deployment variables are NA
-fs_stb$tempmonth<-NA
-fs_stb$precipmonth<-NA
-fs_stb$PETmonth<-NA
-fs_stb$AETmonth<-NA
-fs_stb$moist_indexmonth<-NA
-fs_stb$snowmonth<-NA
-fs_stb$soilwatermonth<-NA
+litter_stb$tempmonth<-NA
+litter_stb$precipmonth<-NA
+litter_stb$PETmonth<-NA
+litter_stb$AETmonth<-NA
+litter_stb$moist_indexmonth<-NA
+litter_stb$snowmonth<-NA
+litter_stb$soilwatermonth<-NA
 
 # Build subset including predictor variables used for CELLDEX model
 # Simultaneously, log transform variables that have large skew and back-transform 
 # 10x and 100x corrections done in HydroBASINS
 
 #Setup empty dataframe
-Ldat <- data.frame(logk=fs_stb$logk)
+Ldat <- data.frame(logk=litter_stb$logk)
 
 #For loop to select variables and complete transformations 
 for(i in 2:length(mod_vars$Variables)){
   if(mod_vars$Transform[i]=="none"){
     tempname <- mod_vars$Variables[i]
-    Ldat <- cbind(Ldat,fs_stb[,mod_vars$Variables[i]])
+    Ldat <- cbind(Ldat,litter_stb[,mod_vars$Variables[i]])
     colnames(Ldat)[i] = tempname
   } else
     if(mod_vars$Transform[i]=="log"){
       tempname <- paste0("log10",mod_vars$Variables[i])
-      Ldat <- cbind(Ldat,log10(fs_stb[,mod_vars$Variables[i]]))
+      Ldat <- cbind(Ldat,log10(litter_stb[,mod_vars$Variables[i]]))
       colnames(Ldat)[i] = tempname
     } else
       if(mod_vars$Transform[i]=="log1"){
         tempname <- paste0("log10",mod_vars$Variables[i])
-        Ldat <- cbind(Ldat,log10(fs_stb[,mod_vars$Variables[i]]+1))
+        Ldat <- cbind(Ldat,log10(litter_stb[,mod_vars$Variables[i]]+1))
         colnames(Ldat)[i] = tempname
       } else
         if(mod_vars$Transform[i]=="xten"){
           tempname <- mod_vars$Variables[i]
-          Ldat <- cbind(Ldat,(fs_stb[,mod_vars$Variables[i]]/10))
+          Ldat <- cbind(Ldat,(litter_stb[,mod_vars$Variables[i]]/10))
           colnames(Ldat)[i] = tempname
         } else
           if(mod_vars$Transform[i]=="xhund"){
             tempname <- mod_vars$Variables[i]
-            Ldat <- cbind(Ldat,(fs_stb[,mod_vars$Variables[i]]/100))
+            Ldat <- cbind(Ldat,(litter_stb[,mod_vars$Variables[i]]/100))
             colnames(Ldat)[i] = tempname
           } 
 }
 
 dim(Ldat) #102 total variables
 
-# Predict ln(k) for FS sites using stream ln(k) model (Cgbm) above
-fs$ln_pred_k<-predict(Cgbm, newdata=Ldat, n.trees=best.iter)
+# Predict ln(k) for litter sites using stream ln(k) model (Cgbm) above
+litter$ln_pred_k<-predict(Cgbm, newdata=Ldat, n.trees=best.iter)
 
 # Combine ln(k) predictions with litter condition and and substrate quality
 # in the form of genus level traits (mean and median) from TRY (Kattge et al., 2011)
 traits <- read.csv("TRY_traits.csv")
 
-fs2 <- merge(fs,traits,by='Genus')
+litter2 <- merge(litter,traits,by='Genus')
 
 # Clean up variables and make factors
-fs2$mesh.size.category<-factor(fs2$mesh.size.category)
-fs2$Leaf.condition[which(fs2$Leaf.condition=="unknown")]<-NA
-fs2$Leaf.condition[which(fs2$Leaf.condition=="air-dried")]<-NA
-fs2$Leaf.condition[which(fs2$Leaf.condition=="mixed")]<-NA
-fs2$Leaf.condition<-factor(fs2$Leaf.condition)
+litter2$Mesh.size<-factor(litter2$Mesh.size)
+litter2$Leaf.condition<-factor(litter2$Leaf.condition)
 
 # Build the dataframe containing only variables for the model
 val_var <- read.csv(file="validation_variables.csv")
-Fdat <- fs2[,colnames(fs2) %in% val_var$Variables]
-
-Fdat$mesh.size.category<-as.character(Fdat$mesh.size.category)
-Fdat$Leaf.condition<-as.character(Fdat$Leaf.condition)
+Fdat <- litter2[,colnames(litter2) %in% val_var$Variables]
 
 # Run the BRT validation model
 Fgbm<- gbm(logk~., 
