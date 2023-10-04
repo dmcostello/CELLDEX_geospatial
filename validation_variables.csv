@@ -4,21 +4,13 @@ Mesh.size,Follstad Shah
 Leaf.condition,Follstad Shah
 ln_pred_k,CELLDEX model
 N_Leaf_Mn,TRY
-N_Leaf_Med,TRY
 P_Leaf_Mn,TRY
-P_Leaf_Med,TRY
 NtoP_Leaf_Mn,TRY
-NtoP_Leaf_Med,TRY
 Thick_Mn,TRY
-Thick_Med,TRY
 C_Leaf_Mn,TRY
-C_Leaf_Med,TRY
 CtoN_Leaf_Mn,TRY
-CtoN_Leaf_Med,TRY
 Ca_Leaf_Mn,TRY
-Ca_Leaf_Med,TRY
 N_Litter_Mn,TRY
-N_Litter_Med,TRY
 CtoN_Litter_Mn,TRY
 C_Litter_Mn,TRY
 P_Litter_Mn,TRY
