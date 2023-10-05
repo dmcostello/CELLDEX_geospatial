@@ -39,7 +39,7 @@ leaf6 <- leaf5 %>% group_by(Mesh.size,Leaf.condition,Genus,latitude,longitude) %
   summarise(mean_kd=mean(kd),Sorting.code=min(Sorting.code),mean_mean_daily_temp=mean(mean_temp,na.rm=T),.groups = 'drop') %>%
   as.data.frame()
 
-dim(leaf6) #1005 measurements of kd
+dim(leaf6) #973 measurements of kd
 
 # Merge back citations
 leaf7 <- merge(leaf6,leaf5[,c("Sorting.code","Citation")],by='Sorting.code')
@@ -47,10 +47,54 @@ leaf7 <- merge(leaf6,leaf5[,c("Sorting.code","Citation")],by='Sorting.code')
 # Remove any litter genera where n < 3
 gen_tab <- as.data.frame(table(leaf7$Genus))
 dim(gen_tab) #105 total genera
-dim(gen_tab[gen_tab$Freq>3,]) #35 genera with n > 3
+gen_tab3 <- gen_tab[gen_tab$Freq>3,] #Only genera with n > 3
+dim(gen_tab3) #33 genera
 
-leaf8 <- leaf7[leaf7$Genus %in% gen_tab[gen_tab$Freq>3,'Var1'],] 
-dim(leaf8) #895 measurements
+leaf8 <- leaf7[leaf7$Genus %in% gen_tab3$Var1,] 
+dim(leaf8) #861 measurements
 
 # Write the final cleaned file for BRT analysis
-write.csv(leaf8,"litter_processed.csv",row.names = F)
+#write.csv(leaf8,"litter_processed.csv",row.names = F)
+
+
+## TRAIT CLEANING ##
+
+# Bring in raw data file
+# From lit review done by Jenn Follstad Shah
+litter_trait <- read.csv(file="Litter_trait_review.csv")
+summary(litter_trait)
+
+# How many genera
+length(unique(litter_trait$Genus)) #172 genera
+
+# Aggregate by genus-level means
+litter_Mn <- litter_trait %>% group_by(Genus) %>% 
+  summarise(N_Litter_Mn=mean(perN,na.rm=T),
+            P_Litter_Mn=mean(perP,na.rm=T),
+            C_Litter_Mn=mean(perC,na.rm=T),
+            Lignin_Litter_Mn=mean(perLignin,na.rm=T),
+            Cellulose_Litter_Mn=mean(perCellulose,na.rm=T),
+            CtoN_Litter_Mn=mean(CtoN,na.rm=T),
+            NtoP_Litter_Mn=mean(NtoP,na.rm=T),
+            .groups = 'drop') %>%
+  as.data.frame()
+
+# Bring in leaf traits from TRY database
+leaf_TRY <- read.csv("TRY_traits.csv")
+
+#Look for mismatches
+leaf_TRY[!(leaf_TRY$Genus %in% litter_Mn$Genus),'Genus'] 
+  #Rubus and Carex are in TRY but not the litter review
+
+gen_tab3[!(gen_tab3$Var1 %in% leaf_TRY$Genus),'Var1']
+  #8 genera with >3 decomp rates but no leaf traits
+
+gen_tab3[!(gen_tab3$Var1 %in% litter_Mn$Genus),'Var1']
+  #All genera have at least 1 litter trait
+
+
+# Merge leaf and litter traits
+traits <- merge(litter_Mn,leaf_TRY,by='Genus',all.x=T,all.y=T)
+
+# Write database of traits
+#write.csv(traits,file="traits.csv")

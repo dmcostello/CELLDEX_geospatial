@@ -402,11 +402,14 @@ dim(Ldat) #102 total variables
 litter$ln_pred_k<-predict(Cgbm, newdata=Ldat, n.trees=best.iter)
 
 # Combine ln(k) predictions with litter condition and and substrate quality
-# in the form of genus level traits (mean and median) from TRY (Kattge et al., 2011)
-traits <- read.csv("TRY_traits.csv")
+# in the form of genus-level leaf traits (mean) from TRY (Kattge et al., 2011)
+# also genus-level litter traits (mean) from literature review
+# See 'litter process.R' for details
+
+traits <- read.csv("traits.csv")
 litter2 <- merge(litter,traits,by='Genus')
 
-length(unique(litter2$Genus)) #25 genera with litter traits
+length(unique(litter2$Genus)) #33 genera with leaf OR litter traits
 
 # Clean up variables and make factors
 litter2$Mesh.size<-factor(litter2$Mesh.size)

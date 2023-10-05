@@ -10,9 +10,10 @@ Thick_Mn,TRY
 C_Leaf_Mn,TRY
 CtoN_Leaf_Mn,TRY
 Ca_Leaf_Mn,TRY
-N_Litter_Mn,TRY
-CtoN_Litter_Mn,TRY
-C_Litter_Mn,TRY
-P_Litter_Mn,TRY
-Lignin_Litter_Mn,TRY
-Cellulose_Litter_Mn,TRY
+N_Litter_Mn,Lit review
+C_Litter_Mn,Lit review
+P_Litter_Mn,Lit review
+Lignin_Litter_Mn,Lit review
+Cellulose_Litter_Mn,Lit review
+CtoN_Litter_Mn,Lit review
+NtoP_Litter_Mn,Lit review
