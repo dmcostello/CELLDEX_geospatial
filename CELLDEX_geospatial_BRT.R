@@ -312,6 +312,7 @@ pdf(file = "stream_pdps_6.pdf",width=4,height=10)
 grid.arrange(ps1,ps2,ps3,ps4,ps5,ps6, ncol = 1,left=textGrob(bquote('ln' ~K[d]),rot=90))
 dev.off()
 
+
 ########################################
 #### Load and join leaf litter data ####
 ########################################
@@ -396,15 +397,15 @@ for(i in 2:length(mod_vars$Variables)){
           } 
 }
 
-dim(Ldat) #102 total variables
+dim(Ldat) #102 total variables, same as cotton dataframe
 
 # Predict ln(k) for litter sites using stream ln(k) model (Cgbm) above
 litter$ln_pred_k<-predict(Cgbm, newdata=Ldat, n.trees=best.iter)
 
 # Combine ln(k) predictions with litter condition and and substrate quality
 # in the form of genus-level leaf traits (mean) from TRY (Kattge et al., 2011)
-# also genus-level litter traits (mean) from literature review
-# See 'litter process.R' for details
+# also genus-level litter traits (mean) from literature review.
+# See 'litter process.R' for details.
 
 traits <- read.csv("traits.csv")
 litter2 <- merge(litter,traits,by='Genus')
@@ -416,6 +417,8 @@ litter2$Mesh.size<-factor(litter2$Mesh.size)
 litter2$Leaf.condition<-factor(litter2$Leaf.condition)
 
 # Build the dataframe containing only variables for the model
+# Variables for the validation model include cotton kd, experimental conditions,
+# chemistry of fresh leaves, and chemistry of senesced leaves 
 val_var <- read.csv(file="validation_variables.csv")
 Fdat <- litter2[,colnames(litter2) %in% val_var$Variables]
 
