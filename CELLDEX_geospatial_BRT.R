@@ -442,4 +442,76 @@ Fsum
 print(1-sum((Fdat$logk - predict(Fgbm, newdata=Fdat, n.trees=best.iter2))^2)/
         sum((Fdat$logk - mean(Fdat$logk))^2))
 
+# Get grids of x variable values and predictions to make partial dependence plots
+lnpredk<-plot(Fgbm,i.var=c('ln_pred_k','Mesh.size'),return.grid=TRUE)
+c2n<-plot(Fgbm,i.var='CtoN_Litter_Mn',return.grid=TRUE)
+cel<-plot(Fgbm,i.var='Cellulose_Litter_Mn',return.grid=TRUE)
+lig<-plot(Fgbm,i.var='Lignin_Litter_Mn',return.grid=TRUE)
+nmn<-plot(Fgbm,i.var='N_Litter_Mn',return.grid=TRUE)
+cmn<-plot(Fgbm,i.var='C_Litter_Mn',return.grid=TRUE)
+
+# Get quartiles of the x variable to mark in plots
+kdrug<-as.data.frame(quantile(Fdat$ln_pred_k,probs = seq(0, 1, 0.25),na.rm=T))
+colnames(kdrug)[1]<-"rug"
+c2nrug<-as.data.frame(quantile(Fdat$CtoN_Litter_Mn,probs = seq(0, 1, 0.25),na.rm=T))
+colnames(c2nrug)[1]<-"rug"
+celrug<-as.data.frame(quantile(Fdat$Cellulose_Litter_Mn,probs = seq(0, 1, 0.25),na.rm=T))
+colnames(celrug)[1]<-"rug"
+ligrug<-as.data.frame(quantile(Fdat$Lignin_Litter_Mn,probs=seq(0, 1, 0.25),na.rm=T))
+colnames(ligrug)[1]<-"rug"
+nmnrug<-as.data.frame(quantile(Fdat$N_Litter_Mn,probs=seq(0, 1, 0.25),na.rm=T))
+colnames(nmnrug)[1]<-"rug"
+cmnrug<-as.data.frame(quantile(Fdat$C_Litter_Mn,probs=seq(0, 1, 0.25),na.rm=T))
+colnames(cmnrug)[1]<-"rug"
+
+# Make partial dependence plots in ggplot
+cols<-c("brown","forestgreen")
+pf1<-ggplot(data = lnpredk, aes(ln_pred_k, y)) +
+  geom_smooth(aes(color=Mesh.size),method="gam",se=T) +
+  geom_line(aes(color=Mesh.size),linetype=1,alpha=0.25,linewidth=0.25) +
+  geom_point(aes(x=rug,y=min(lnpredk$y)),kdrug,color="gray",shape = 15) +
+  scale_color_manual(values=cols) +
+  ylab("") + xlab(bquote('ln Predicted' ~K[d])) + theme(legend.position=c(0.25,0.95)) + theme(legend.title = element_blank()) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black")) +
+  guides(linetype = guide_legend(ncol = 1)) + guides(color=guide_legend(ncol=2))
+
+pf2<-ggplot(data = lig, aes(Lignin_Litter_Mn, y)) +
+  geom_point(aes(x=rug,y=min(lig$y)),ligrug,color="gray",shape = 15) +
+  geom_line(color = "steelblue", size = 1) +
+  ylab("") + 
+  xlab("Litter % lignin") +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
+
+pf3<-ggplot(data = c2n, aes(CtoN_Litter_Mn, y)) +
+  geom_point(aes(x=rug,y=min(c2n$y)),c2nrug,color="gray",shape = 15) +
+  geom_line(color = "steelblue", size = 1) +
+  ylab("") + 
+  xlab("Litter C:N molar ratio") +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
+
+pf4<-ggplot(data = nmn, aes(N_Litter_Mn, y)) +
+  geom_point(aes(x=rug,y=min(nmn$y)),nmnrug,color="gray",shape = 15) +
+  geom_line(color = "steelblue", size = 1) +
+  ylab("") + 
+  xlab("Litter % N content") +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
+
+pf5<-ggplot(data = cel, aes(Cellulose_Litter_Mn, y)) +
+  geom_point(aes(x=rug,y=min(cel$y)),celrug,color="gray",shape = 15) +
+  geom_line(color = "steelblue", size = 1) +
+  ylab("") + xlab("Litter % cellulose") +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
+
+pf6<-ggplot(data = cmn, aes(C_Litter_Mn, y)) +
+  geom_point(aes(x=rug,y=min(cmn$y)),cmnrug,color="gray",shape = 15) +
+  geom_line(color = "steelblue", size = 1) +
+  ylab("") + 
+  xlab("Litter % C content") +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
+
+# Make trellis of the top 6 partial dependence plots
+pdf(file = "validation_pdps_6_meshsize2.pdf",width=4,height=12)
+grid.arrange(pf1,pf2,pf3,pf4,pf5,pf6, ncol = 1,left=textGrob(bquote('ln' ~K[d]),rot=90))
+dev.off()
+
 toc()
