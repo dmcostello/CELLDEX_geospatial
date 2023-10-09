@@ -47,11 +47,19 @@ ___
 
 *Repository*: https://doi.org/10.25400/lincolnuninz.11894697
 
-Rasters of dissolved reactive phosphorus (DRP) and nitrate (NO3). Coarse-scale maps are provided in the above source, and fine-scale rasters were provided by authors.
+Rasters of dissolved reactive phosphorus (DRP) and nitrate (NO3) yield from watersheds (kg (NO~3~-N or DRP-P)/ha/yr). Coarse-scale maps are provided in the above source, and fine-scale rasters were provided by authors.
 
 
-  * `gbc1549-sup-0009-ts02.csv`
-  * `gbc20320-sup-0002-supinfo.csv`
+### `gbc1549-sup-0009-ts02.csv`
+*Source*: Mahowald et al. (2008)  https://doi.org/10.1029/2008GB003240
+
+Phosphorus dry deposition (kg P/km^2^/yr). See supporting information at above link for metadata. 
+
+### `gbc20320-sup-0002-supinfo.csv`
+Brahney et al. (2015) https://doi.org/10.1002/2015GB005137
+
+Phosphorus dry deposition (kg P/km^2^/yr). See supporting information at above link for metadata. 
+
   * `var_names.csv`
   * `validation_variables.csv`
 
