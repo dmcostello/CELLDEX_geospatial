@@ -28,13 +28,19 @@ Code files in repository:
 
 Metadata:
 
-__LeRoy.ExpandedDataset.Kvalues.csv__
+__`LeRoy.ExpandedDataset.Kvalues.csv`__
 
 *Source*: LeRoy et al. (2020) https://doi.org/10.1111/1365-2745.13262
 
 *Repository*: https://github.com/andrew-hipp/decomposition-phylogeny-2019
 
 See repository for metadata
+
+
+__`LeafConditionKey2.csv`__
+
+Additional information about leaf condition not included in `LeRoy.ExpandedDataset.Kvalues`. Provided by Jenn Follstad Shah. Linked by `Sorting.code`.
+
 
 __`TRY_traits.csv`__
 
@@ -43,17 +49,40 @@ __`TRY_traits.csv`__
 |Parameter     |Definition   |Units  |
 | ------------- |-----------| -----|
 |Genus|Plant genus||
-|N_Leaf_Mn|Mean N content of fresh leaves|% dry mass|
-|N_Leaf_Med|Median N content of fresh leaves|% dry mass|
-|P_Leaf_Mn|Mean P content of fresh leaves|% dry mass|
-|P_Leaf_Med|Median P content of fresh leaves|% dry mass|
+|N_Leaf_Mn|Mean nitrogen content of fresh leaves|% dry mass|
+|N_Leaf_Med|Median nitrogen content of fresh leaves|% dry mass|
+|P_Leaf_Mn|Mean phosphorus content of fresh leaves|% dry mass|
+|P_Leaf_Med|Median phosphorus content of fresh leaves|% dry mass|
 |NtoP_Leaf_Mn|Mean N:P of fresh leaves|molar|
 |NtoP_Leaf_Med|Median N:P of fresh leaves|molar|
 |Thick_Mn|Mean fresh leaf thickness||    
 |Thick_Med|Median fresh leaf thickness|| 
-|C_Leaf_Mn|Mean C content of fresh leaves|% dry mass|
-|C_Leaf_Med|Median C content of fresh leaves|% dry mass|
+|C_Leaf_Mn|Mean carbon content of fresh leaves|% dry mass|
+|C_Leaf_Med|Median carbon content of fresh leaves|% dry mass|
 |CtoN_Leaf_Mn|Mean C:N of fresh leaves|molar|
 |CtoN_Leaf_Med|Median C:N of fresh leaves|molar|
-|Ca_Leaf_Mn|Mean Ca content of fresh leaves|% dry mass|
-|Ca_Leaf_Med|Median Ca content of fresh leaves|% dry mass|
+|Ca_Leaf_Mn|Mean calcium content of fresh leaves|% dry mass|
+|Ca_Leaf_Med|Median calcium content of fresh leaves|% dry mass|
+
+
+__`Litter_traits_review.csv`__
+
+Database of litter chemistry from stream decomp experiments from literature. Provided by Jenn Follstad Shah.
+
+|Parameter     |Definition   |Units  |
+| ------------- |-----------| -----|
+|Citation|Citation from which data were extracted||
+|Sci_name|Taxonomic name of litter used||
+|Genus|Taxonomic genus||
+|Species|Taxonomic species||
+|Family|Taxonomic family||
+|Stream_names|Name of study stream||
+|perC|Litter percent carbon|% dry mass|
+|perN|Litter percent nitrogen|% dry mass|
+|perP|Litter percent phosphorus|% dry mass|
+|CtoN|Litter C:N|Molar ratio|
+|CtoP|Litter C:P|Molar ratio|
+|NtoP|Litter N:P|Molar ratio|
+|How_ratios_were_determined| If ratios were reported in paper or calculated||
+|perLignin|Litter lignin content|% dry mass|
+|perCellulose|Litter cellulose content|% dry mass|
