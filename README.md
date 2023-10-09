@@ -1,32 +1,35 @@
-# CELLDEX_geospatial
+# CELLDEX geospatial
 Data and code for geospatial modeling of CELLDEX data
 Tiegs et al. *Predicting global organic-matter decomposition in flowing waters*.
 
+## List of all files in repository
 
-Raw data files in repository:
-  * `LeRoy.ExpandedDataset.Kvalues.csv`
-  * `LeafConditionKey2.csv`
-  * `TRY_traits.csv`
-  * `Litter_traits_review.csv`
-  * `CELLDEX_deploy_dates.csv`
-  * `DRP_Conc.tif`
-  * `NO3_Conc.tif`
-  * `gbc1549-sup-0009-ts02.csv`
-  * `gbc20320-sup-0002-supinfo.csv`
-  * `var_names.csv`
-  * `validation_variables.csv`
+Raw data files in repository:\
+  * `LeRoy.ExpandedDataset.Kvalues.csv`\
+  * `LeafConditionKey2.csv`\
+  * `TRY_traits.csv`\
+  * `Litter_traits_review.csv`\
+  * `CELLDEX_deploy_dates.csv`\
+  * `DRP_Conc.tif`\
+  * `NO3_Conc.tif`\
+  * `gbc1549-sup-0009-ts02.csv`\
+  * `gbc20320-sup-0002-supinfo.csv`\
+  * `var_names.csv`\
+  * `validation_variables.csv`\
 
 
-Derived data files in repository:
-  * `litter_processed.csv`
+Derived data files in repository:\
+  * `litter_processed.csv`\
   * `traits.csv`
 
 
-Code files in repository:
-  * `CELLDEX_geospatial_BRT.R` code for statistical analyses and figure generation
+Code files in repository:\
+  * `CELLDEX_geospatial_BRT.R` code for statistical analyses and figure generation\
   * `litter_process.R` code for cleaning and compiling litter decay and traits
 
-Metadata:
+___
+
+## Metadata for files used in `litter_process.R`
 
 __`LeRoy.ExpandedDataset.Kvalues.csv`__
 
@@ -77,12 +80,35 @@ Database of litter chemistry from stream decomp experiments from literature. Pro
 |Species|Taxonomic species||
 |Family|Taxonomic family||
 |Stream_names|Name of study stream||
-|perC|Litter percent carbon|% dry mass|
-|perN|Litter percent nitrogen|% dry mass|
-|perP|Litter percent phosphorus|% dry mass|
+|perC|Litter carbon content|% dry mass|
+|perN|Litter nitrogen content|% dry mass|
+|perP|Litter phosphorus content|% dry mass|
 |CtoN|Litter C:N|Molar ratio|
 |CtoP|Litter C:P|Molar ratio|
 |NtoP|Litter N:P|Molar ratio|
 |How_ratios_were_determined| If ratios were reported in paper or calculated||
 |perLignin|Litter lignin content|% dry mass|
 |perCellulose|Litter cellulose content|% dry mass|
+
+
+__`litter_processed.csv`__
+
+Derived dataset of average litter decomposition rates in streams with at least 3 measurements for each genera.
+
+|Parameter     |Definition   |Units  |
+| ------------- |-----------| -----|
+|Sorting.code|Code to link back to original data||
+|Mesh.size|Size of mesh in litter bag|See note 1| 
+|Leaf.condition|Condition of leaves in litter bag|See note 2|
+|Genus|Taxonomic genus||
+|latitude|Reported latitude|Decimal degrees|
+|longitude|Reported longitude|Decimal degrees|
+|mean_kd|Mean decomposition rate|1/d|
+|mean_mean_daily_temp|Mean reported average temperature|°C|
+|Citation|Citation from which data were extracted||
+
+1. Data were screened to include only coarse or fine mesh bags.\
+2. Data were screened to include only senesced or green leaves. Air-dried leaves were classified as senesced.
+
+
+  * `traits.csv`
