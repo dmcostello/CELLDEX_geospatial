@@ -27,8 +27,11 @@ Code files in repository:
   * `litter_process.R` code for cleaning and compiling litter decay and traits
 
 Metadata:
+
 __LeRoy.ExpandedDataset.Kvalues.csv__
+
 *Source*: LeRoy et al. (2020) https://doi.org/10.1111/1365-2745.13262
+
 *Repository*: https://github.com/andrew-hipp/decomposition-phylogeny-2019
 
 See repository for metadata
