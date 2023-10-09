@@ -6,10 +6,10 @@ Tiegs et al. *Predicting global organic-matter decomposition in flowing waters*.
 
 Raw data files in repository:
   * [`CELLDEX_deploy_dates.csv`](https://github.com/dmcostello/CELLDEX_geospatial/tree/main#celldex_deploy_datescsv)
-  * `DRP_Conc.tif`
-  * `NO3_Conc.tif`
-  * `gbc1549-sup-0009-ts02.csv`
-  * `gbc20320-sup-0002-supinfo.csv`
+  * [`DRP_Conc.tif`](https://github.com/dmcostello/CELLDEX_geospatial/tree/main#drp_conctif-and-no3_conctif)
+  * [`NO3_Conc.tif`](https://github.com/dmcostello/CELLDEX_geospatial/tree/main#drp_conctif-and-no3_conctif)
+  * [`gbc1549-sup-0009-ts02.csv`](https://github.com/dmcostello/CELLDEX_geospatial/tree/main#gbc1549-sup-0009-ts02csv)
+  * [`gbc20320-sup-0002-supinfo.csv`](https://github.com/dmcostello/CELLDEX_geospatial/tree/main#gbc20320-sup-0002-supinfocsv)
   * `var_names.csv`
   * `validation_variables.csv`
   * `LeRoy.ExpandedDataset.Kvalues.csv`
@@ -33,7 +33,7 @@ ___
 
 ## Metadata for files used in `CELLDEX_geospatial_BRT.R`
 
-### __`CELLDEX_deploy_dates.csv`__
+### `CELLDEX_deploy_dates.csv`
 
 |Parameter     |Definition   |Units  |
 | ------------- |-----------| -----|
@@ -42,7 +42,7 @@ ___
 |deploy_date|Date of cotton deployment|month/day/year|
 
 
-### __`DRP_Conc.tif`__ and __`NO3_Conc.tif`__
+### `DRP_Conc.tif` and `NO3_Conc.tif`
 *Source*: McDowell et al. (2021) https://doi.org/10.1002/gdj3.111
 
 *Repository*: https://doi.org/10.25400/lincolnuninz.11894697
@@ -53,12 +53,12 @@ Rasters of dissolved reactive phosphorus (DRP) and nitrate (NO3) yield from wate
 ### `gbc1549-sup-0009-ts02.csv`
 *Source*: Mahowald et al. (2008)  https://doi.org/10.1029/2008GB003240
 
-Phosphorus dry deposition (kg P/km^2^/yr). See supporting information at above link for metadata. 
+Phosphorus dry deposition (kg P/km<sup>2</sup>/yr). See supporting information at above link for metadata. 
 
 ### `gbc20320-sup-0002-supinfo.csv`
 Brahney et al. (2015) https://doi.org/10.1002/2015GB005137
 
-Phosphorus dry deposition (kg P/km^2^/yr). See supporting information at above link for metadata. 
+Phosphorus dry deposition (kg P/km<sup>2</sup>/yr). See supporting information at above link for metadata. 
 
   * `var_names.csv`
   * `validation_variables.csv`
@@ -67,7 +67,7 @@ ___
 
 ## Metadata for files used in `litter_process.R`
 
-### __`LeRoy.ExpandedDataset.Kvalues.csv`__
+### `LeRoy.ExpandedDataset.Kvalues.csv`
 
 *Source*: LeRoy et al. (2020) https://doi.org/10.1111/1365-2745.13262
 
@@ -76,12 +76,12 @@ ___
 See repository for metadata
 
 
-### __`LeafConditionKey2.csv`__
+### `LeafConditionKey2.csv`
 
 Additional information about leaf condition not included in `LeRoy.ExpandedDataset.Kvalues`. Provided by Jenn Follstad Shah. Linked by `Sorting.code`.
 
 
-### __`TRY_traits.csv`__
+### `TRY_traits.csv`
 
 *Source*: Data request from TRY Plant Trait Database (https://try-db.org/) 
 
@@ -104,7 +104,7 @@ Additional information about leaf condition not included in `LeRoy.ExpandedDatas
 |Ca_Leaf_Med|Median calcium content of fresh leaves|% dry mass|
 
 
-### __`Litter_traits_review.csv`__
+### `Litter_traits_review.csv`
 
 Database of litter chemistry from stream decomp experiments from literature. Provided by Jenn Follstad Shah.
 
@@ -127,7 +127,7 @@ Database of litter chemistry from stream decomp experiments from literature. Pro
 |perCellulose|Litter cellulose content|% dry mass|
 
 
-### __`litter_processed.csv`__
+### `litter_processed.csv`
 
 Derived dataset of average litter decomposition rates in streams with at least 3 measurements for each genera.
 
@@ -147,7 +147,7 @@ Derived dataset of average litter decomposition rates in streams with at least 3
 2. Data were screened to include only senesced or green leaves. Air-dried leaves were classified as senesced.
 
 
-### __`traits.csv`__
+### `traits.csv`
 
 Derived dataset averaging and merging leaf and litter traits by genus. Parameter definitions and units are the same as `TRY_traits.csv` and `Litter_traits_review.csv`. All senesced litter traits are reported as genus-level means. 
 
