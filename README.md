@@ -5,7 +5,7 @@ Tiegs et al. *Predicting global organic-matter decomposition in flowing waters*.
 ## List of all files in repository
 
 Raw data files in repository:
-  * [`CELLDEX_deploy_dates.csv` ](https://github.com/dmcostello/CELLDEX_geospatial/tree/main#celldex_deploy_datescsv)
+  * [`CELLDEX_deploy_dates.csv`] (https://github.com/dmcostello/CELLDEX_geospatial/tree/main#celldex_deploy_datescsv)
   * `DRP_Conc.tif`
   * `NO3_Conc.tif`
   * `gbc1549-sup-0009-ts02.csv`
@@ -24,8 +24,10 @@ Derived data files in repository:
 
 
 Code files in repository:
-  * `CELLDEX_geospatial_BRT.R` code for statistical analyses and figure generation
-  * `litter_process.R` code for cleaning and compiling litter decay and traits
+  * [`CELLDEX_geospatial_BRT.R`] (https://github.com/dmcostello/CELLDEX_geospatial/tree/main#metadata-for-files-used-in-celldex_geospatial_brtr) 
+  code for statistical analyses and figure generation
+  * [`litter_process.R`] (https://github.com/dmcostello/CELLDEX_geospatial/tree/main#metadata-for-files-used-in-litter_processr) 
+  code for cleaning and compiling litter decay and traits
 
 ___
 
@@ -39,7 +41,6 @@ ___
 |stream|Numerical stream ID||
 |deploy_date|Date of cotton deployment|month/day/year|
 
----
 
 ### __`DRP_Conc.tif`__ and __`NO3_Conc.tif`__
 *Source*: McDowell et al. (2021) https://doi.org/10.1002/gdj3.111
@@ -83,14 +84,14 @@ Additional information about leaf condition not included in `LeRoy.ExpandedDatas
 |N_Leaf_Med|Median nitrogen content of fresh leaves|% dry mass|
 |P_Leaf_Mn|Mean phosphorus content of fresh leaves|% dry mass|
 |P_Leaf_Med|Median phosphorus content of fresh leaves|% dry mass|
-|NtoP_Leaf_Mn|Mean N:P of fresh leaves|molar|
-|NtoP_Leaf_Med|Median N:P of fresh leaves|molar|
-|Thick_Mn|Mean fresh leaf thickness||    
-|Thick_Med|Median fresh leaf thickness|| 
+|NtoP_Leaf_Mn|Mean N:P of fresh leaves||
+|NtoP_Leaf_Med|Median N:P of fresh leaves||
+|Thick_Mn|Mean fresh leaf thickness|mm|    
+|Thick_Med|Median fresh leaf thickness|mm| 
 |C_Leaf_Mn|Mean carbon content of fresh leaves|% dry mass|
 |C_Leaf_Med|Median carbon content of fresh leaves|% dry mass|
-|CtoN_Leaf_Mn|Mean C:N of fresh leaves|molar|
-|CtoN_Leaf_Med|Median C:N of fresh leaves|molar|
+|CtoN_Leaf_Mn|Mean C:N of fresh leaves||
+|CtoN_Leaf_Med|Median C:N of fresh leaves||
 |Ca_Leaf_Mn|Mean calcium content of fresh leaves|% dry mass|
 |Ca_Leaf_Med|Median calcium content of fresh leaves|% dry mass|
 
