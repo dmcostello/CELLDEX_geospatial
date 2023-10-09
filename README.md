@@ -31,7 +31,7 @@ ___
 
 ## Metadata for files used in `CELLDEX_geospatial_BRT.R`
 
-__`CELLDEX_deploy_dates.csv`__
+### __`CELLDEX_deploy_dates.csv`__
 
 |Parameter     |Definition   |Units  |
 | ------------- |-----------| -----|
@@ -40,7 +40,7 @@ __`CELLDEX_deploy_dates.csv`__
 |deploy_date|Date of cotton deployment|month/day/year|
 
 
-__`DRP_Conc.tif`__ and __`NO3_Conc.tif`__
+### __`DRP_Conc.tif`__ and __`NO3_Conc.tif`__
 *Source*: McDowell et al. (2021) https://doi.org/10.1002/gdj3.111
 
 *Repository*: https://doi.org/10.25400/lincolnuninz.11894697
@@ -57,7 +57,7 @@ ___
 
 ## Metadata for files used in `litter_process.R`
 
-__`LeRoy.ExpandedDataset.Kvalues.csv`__
+### __`LeRoy.ExpandedDataset.Kvalues.csv`__
 
 *Source*: LeRoy et al. (2020) https://doi.org/10.1111/1365-2745.13262
 
@@ -66,12 +66,12 @@ __`LeRoy.ExpandedDataset.Kvalues.csv`__
 See repository for metadata
 
 
-__`LeafConditionKey2.csv`__
+### __`LeafConditionKey2.csv`__
 
 Additional information about leaf condition not included in `LeRoy.ExpandedDataset.Kvalues`. Provided by Jenn Follstad Shah. Linked by `Sorting.code`.
 
 
-__`TRY_traits.csv`__
+### __`TRY_traits.csv`__
 
 *Source*: Data request from TRY Plant Trait Database (https://try-db.org/) 
 
@@ -94,7 +94,7 @@ __`TRY_traits.csv`__
 |Ca_Leaf_Med|Median calcium content of fresh leaves|% dry mass|
 
 
-__`Litter_traits_review.csv`__
+### __`Litter_traits_review.csv`__
 
 Database of litter chemistry from stream decomp experiments from literature. Provided by Jenn Follstad Shah.
 
@@ -117,7 +117,7 @@ Database of litter chemistry from stream decomp experiments from literature. Pro
 |perCellulose|Litter cellulose content|% dry mass|
 
 
-__`litter_processed.csv`__
+### __`litter_processed.csv`__
 
 Derived dataset of average litter decomposition rates in streams with at least 3 measurements for each genera.
 
@@ -137,7 +137,7 @@ Derived dataset of average litter decomposition rates in streams with at least 3
 2. Data were screened to include only senesced or green leaves. Air-dried leaves were classified as senesced.
 
 
-__`traits.csv`__
+### __`traits.csv`__
 
 Derived dataset averaging and merging leaf and litter traits by genus. Parameter definitions and units are the same as `TRY_traits.csv` and `Litter_traits_review.csv`. All senesced litter traits are reported as genus-level means. 
 
