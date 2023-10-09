@@ -47,7 +47,7 @@ ___
 
 *Repository*: https://doi.org/10.25400/lincolnuninz.11894697
 
-Rasters of dissolved reactive phosphorus (DRP) and nitrate (NO3) yield from watersheds (kg (NO<sub>3</sub>-N or DRP-P)/ha/yr). Coarse-scale maps are provided in the above source, and fine-scale rasters were provided by authors.
+Rasters of dissolved reactive phosphorus (DRP) and nitrate (NO<sub>3</sub>) yield from watersheds (kg (NO<sub>3</sub>-N or DRP-P)/ha/yr). Coarse-scale maps are provided in the above source, and fine-scale rasters were provided by authors.
 
 
 ### `gbc1549-sup-0009-ts02.csv`
@@ -60,8 +60,26 @@ Brahney et al. (2015) https://doi.org/10.1002/2015GB005137
 
 Phosphorus dry deposition (kg P/km<sup>2</sup>/yr). See supporting information at above link for metadata. 
 
-  * `var_names.csv`
-  * `validation_variables.csv`
+### `var_names.csv`
+Names of predictor variables that were included in the boosted regression tree model predicting cotton strip decomposition.
+
+|Parameter     |Definition   |
+| ------------- |-----------|
+|Variables|Name of variable|
+|Transform|Transformation needed (see note)|
+|Description|Longer description of variable|
+|Source|Source of data|
+
+Transformation codes: log = log(x); 
+log1 = log(x+1); 
+xhund = x*100; 
+xten = x*10
+
+
+
+
+### `validation_variables.csv`
+Names of predictor variables that were included in the boosted regression tree model predicting leaf litter decomposition.
 
 ___
 
