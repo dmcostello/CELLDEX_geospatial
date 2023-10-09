@@ -5,7 +5,7 @@ Tiegs et al. *Predicting global organic-matter decomposition in flowing waters*.
 ## List of all files in repository
 
 Raw data files in repository:
-  * `CELLDEX_deploy_dates.csv`
+  * [`CELLDEX_deploy_dates.csv` ](https://github.com/dmcostello/CELLDEX_geospatial/tree/main#celldex_deploy_datescsv)
   * `DRP_Conc.tif`
   * `NO3_Conc.tif`
   * `gbc1549-sup-0009-ts02.csv`
@@ -39,6 +39,7 @@ ___
 |stream|Numerical stream ID||
 |deploy_date|Date of cotton deployment|month/day/year|
 
+---
 
 ### __`DRP_Conc.tif`__ and __`NO3_Conc.tif`__
 *Source*: McDowell et al. (2021) https://doi.org/10.1002/gdj3.111
