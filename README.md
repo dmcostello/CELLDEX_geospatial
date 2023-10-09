@@ -5,7 +5,7 @@ Tiegs et al. *Predicting global organic-matter decomposition in flowing waters*.
 ## List of all files in repository
 
 Raw data files in repository:
-  * [`CELLDEX_deploy_dates.csv`] (https://github.com/dmcostello/CELLDEX_geospatial/tree/main#celldex_deploy_datescsv)
+  * [`CELLDEX_deploy_dates.csv`](https://github.com/dmcostello/CELLDEX_geospatial/tree/main#celldex_deploy_datescsv)
   * `DRP_Conc.tif`
   * `NO3_Conc.tif`
   * `gbc1549-sup-0009-ts02.csv`
@@ -24,9 +24,9 @@ Derived data files in repository:
 
 
 Code files in repository:
-  * [`CELLDEX_geospatial_BRT.R`] (https://github.com/dmcostello/CELLDEX_geospatial/tree/main#metadata-for-files-used-in-celldex_geospatial_brtr) 
+  * [`CELLDEX_geospatial_BRT.R`](https://github.com/dmcostello/CELLDEX_geospatial/tree/main#metadata-for-files-used-in-celldex_geospatial_brtr) 
   code for statistical analyses and figure generation
-  * [`litter_process.R`] (https://github.com/dmcostello/CELLDEX_geospatial/tree/main#metadata-for-files-used-in-litter_processr) 
+  * [`litter_process.R`](https://github.com/dmcostello/CELLDEX_geospatial/tree/main#metadata-for-files-used-in-litter_processr) 
   code for cleaning and compiling litter decay and traits
 
 ___
