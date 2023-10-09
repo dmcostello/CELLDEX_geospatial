@@ -47,7 +47,7 @@ ___
 
 *Repository*: https://doi.org/10.25400/lincolnuninz.11894697
 
-Rasters of dissolved reactive phosphorus (DRP) and nitrate (NO3) yield from watersheds (kg (NO~3~-N or DRP-P)/ha/yr). Coarse-scale maps are provided in the above source, and fine-scale rasters were provided by authors.
+Rasters of dissolved reactive phosphorus (DRP) and nitrate (NO3) yield from watersheds (kg (NO<sub>3</sub>-N or DRP-P)/ha/yr). Coarse-scale maps are provided in the above source, and fine-scale rasters were provided by authors.
 
 
 ### `gbc1549-sup-0009-ts02.csv`
