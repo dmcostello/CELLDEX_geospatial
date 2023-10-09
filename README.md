@@ -111,4 +111,12 @@ Derived dataset of average litter decomposition rates in streams with at least 3
 2. Data were screened to include only senesced or green leaves. Air-dried leaves were classified as senesced.
 
 
-  * `traits.csv`
+__`traits.csv`__
+
+Derived dataset averaging and merging leaf and litter traits by genus. Parameter definitions and units are the same as `TRY_traits.csv` and `Litter_traits_review.csv`. All senesced litter traits are reported as genus-level means. 
+
+___
+
+## Metadata for files used in `CELLDEX_geospatial_BRT.R`
+
+
