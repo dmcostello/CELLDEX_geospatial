@@ -72,7 +72,7 @@ Names of predictor variables that were included in the boosted regression tree m
 
 Transformation codes: log = log(x); 
 log1 = log(x+1); 
-xhund = x*100; 
+xhund = x$\times$100; 
 xten = x*10
 
 
