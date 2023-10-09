@@ -4,28 +4,54 @@ Tiegs et al. *Predicting global organic-matter decomposition in flowing waters*.
 
 ## List of all files in repository
 
-Raw data files in repository:\
-  * `LeRoy.ExpandedDataset.Kvalues.csv`\
-  * `LeafConditionKey2.csv`\
-  * `TRY_traits.csv`\
-  * `Litter_traits_review.csv`\
-  * `CELLDEX_deploy_dates.csv`\
-  * `DRP_Conc.tif`\
-  * `NO3_Conc.tif`\
-  * `gbc1549-sup-0009-ts02.csv`\
-  * `gbc20320-sup-0002-supinfo.csv`\
-  * `var_names.csv`\
-  * `validation_variables.csv`\
+Raw data files in repository:
+  * `CELLDEX_deploy_dates.csv`
+  * `DRP_Conc.tif`
+  * `NO3_Conc.tif`
+  * `gbc1549-sup-0009-ts02.csv`
+  * `gbc20320-sup-0002-supinfo.csv`
+  * `var_names.csv`
+  * `validation_variables.csv`
+  * `LeRoy.ExpandedDataset.Kvalues.csv`
+  * `LeafConditionKey2.csv`
+  * `TRY_traits.csv`
+  * `Litter_traits_review.csv`
 
 
-Derived data files in repository:\
-  * `litter_processed.csv`\
+Derived data files in repository:
+  * `litter_processed.csv`
   * `traits.csv`
 
 
-Code files in repository:\
-  * `CELLDEX_geospatial_BRT.R` code for statistical analyses and figure generation\
+Code files in repository:
+  * `CELLDEX_geospatial_BRT.R` code for statistical analyses and figure generation
   * `litter_process.R` code for cleaning and compiling litter decay and traits
+
+___
+
+## Metadata for files used in `CELLDEX_geospatial_BRT.R`
+
+__`CELLDEX_deploy_dates.csv`__
+
+|Parameter     |Definition   |Units  |
+| ------------- |-----------| -----|
+|partnerid|Numerical partner ID||
+|stream|Numerical stream ID||
+|deploy_date|Date of cotton deployment|month/day/year|
+
+
+__`DRP_Conc.tif`__ and __`NO3_Conc.tif`__
+*Source*: McDowell et al. (2021) https://doi.org/10.1002/gdj3.111
+
+*Repository*: https://doi.org/10.25400/lincolnuninz.11894697
+
+Rasters of dissolved reactive phosphorus (DRP) and nitrate (NO3). Coarse-scale maps are provided in the above source, and fine-scale rasters were provided by authors.
+
+
+  * `gbc1549-sup-0009-ts02.csv`
+  * `gbc20320-sup-0002-supinfo.csv`
+  * `var_names.csv`
+  * `validation_variables.csv`
 
 ___
 
@@ -107,16 +133,11 @@ Derived dataset of average litter decomposition rates in streams with at least 3
 |mean_mean_daily_temp|Mean reported average temperature|°C|
 |Citation|Citation from which data were extracted||
 
-1. Data were screened to include only coarse or fine mesh bags.\
+1. Data were screened to include only coarse or fine mesh bags.
 2. Data were screened to include only senesced or green leaves. Air-dried leaves were classified as senesced.
 
 
 __`traits.csv`__
 
 Derived dataset averaging and merging leaf and litter traits by genus. Parameter definitions and units are the same as `TRY_traits.csv` and `Litter_traits_review.csv`. All senesced litter traits are reported as genus-level means. 
-
-___
-
-## Metadata for files used in `CELLDEX_geospatial_BRT.R`
-
 
