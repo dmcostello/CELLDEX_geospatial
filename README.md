@@ -85,9 +85,29 @@ Names of predictor variables that were included in the boosted regression tree v
 ### Other data files stored in online repositories
 
 __Other CELLDEX cotton data__
+
 *Source*: Tiegs et al. 2019 https://doi.org/10.1126/sciadv.aav0486
+
 *Repository*: https://github.com/dmcostello/CELLDEX2018 
+
 Files: `CELLDEX_SITE_DATA.csv` `CELLDEX_TEMPERATURE.csv` `str_k.csv`
+
+__Climate and weather__
+
+*Source*: https://www.worldclim.org/
+
+*Repository*: `worldclim` package in R
+
+Files: `wc2.1_10m_tmin_12.tif`
+
+__N deposition__
+
+*Source*: Ackerman et al. (2019) https://doi.org/10.1029/2018GB005990
+
+*Repository*: https://doi.org/10.13020/D6KX2R
+
+Files: `inorganic_N_deposition.csv`
+
 
 ___
 
