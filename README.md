@@ -70,13 +70,24 @@ Names of predictor variables that were included in the boosted regression tree m
 |Description|Longer description of variable|
 |Source|Source of data|
 
-Transformation codes: log = log(x); log1 = log(x+1); xhund = x\times 100; xten = x\*10
-
-
+Transformation codes: log = log(x); log1 = log(x+1); xhund = x\*100; xten = x\*10
 
 
 ### `validation_variables.csv`
-Names of predictor variables that were included in the boosted regression tree model predicting leaf litter decomposition.
+Names of predictor variables that were included in the boosted regression tree validation model predicting leaf litter decomposition.
+
+|Parameter     |Definition   |
+| ------------- |-----------|
+|Variables|Name of variable|
+|Source|Source of data|
+
+
+### Other data files stored in online repositories
+
+__Other CELLDEX cotton data__
+*Source*: Tiegs et al. 2019 https://doi.org/10.1126/sciadv.aav0486
+*Repository*: https://github.com/dmcostello/CELLDEX2018 
+Files: `CELLDEX_SITE_DATA.csv` `CELLDEX_TEMPERATURE.csv` `str_k.csv`
 
 ___
 
