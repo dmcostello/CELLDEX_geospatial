@@ -10,17 +10,17 @@ Raw data files in repository:
   * [`NO3_Conc.tif`](https://github.com/dmcostello/CELLDEX_geospatial/tree/main#drp_conctif-and-no3_conctif)
   * [`gbc1549-sup-0009-ts02.csv`](https://github.com/dmcostello/CELLDEX_geospatial/tree/main#gbc1549-sup-0009-ts02csv)
   * [`gbc20320-sup-0002-supinfo.csv`](https://github.com/dmcostello/CELLDEX_geospatial/tree/main#gbc20320-sup-0002-supinfocsv)
-  * `var_names.csv`
-  * `validation_variables.csv`
-  * `LeRoy.ExpandedDataset.Kvalues.csv`
-  * `LeafConditionKey2.csv`
-  * `TRY_traits.csv`
-  * `Litter_traits_review.csv`
+  * [`var_names.csv`](https://github.com/dmcostello/CELLDEX_geospatial/tree/main#var_namescsv)
+  * [`validation_variables.csv`](https://github.com/dmcostello/CELLDEX_geospatial/tree/main#validation_variablescsv)
+  * [`LeRoy.ExpandedDataset.Kvalues.csv`](https://github.com/dmcostello/CELLDEX_geospatial/tree/main#leroyexpandeddatasetkvaluescsv)
+  * [`LeafConditionKey2.csv`](https://github.com/dmcostello/CELLDEX_geospatial/tree/main#leafconditionkey2csv)
+  * [`TRY_traits.csv`](https://github.com/dmcostello/CELLDEX_geospatial/tree/main#try_traitscsv)
+  * [`Litter_traits_review.csv`](https://github.com/dmcostello/CELLDEX_geospatial/tree/main#litter_traits_reviewcsv)
 
 
 Derived data files in repository:
-  * `litter_processed.csv`
-  * `traits.csv`
+  * [`litter_processed.csv`](https://github.com/dmcostello/CELLDEX_geospatial/tree/main#litter_processedcsv)
+  * [`traits.csv`](https://github.com/dmcostello/CELLDEX_geospatial/tree/main#traitscsv)
 
 
 Code files in repository:
