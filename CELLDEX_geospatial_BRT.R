@@ -59,8 +59,11 @@ Cpts<-SpatialPointsDataFrame(CELLDEX[,c('longitude','latitude')],CELLDEX,
 ######################################################
 
 # Use WorldClim data to set raster extent and resolution
-clim <- worldclim_global("tmin",res=10,path=tempdir())
-r <- raster::raster(clim$wc2.1_10m_tmin_12)
+#clim <- worldclim_global("tmin",res=10,path=tempdir())
+#r <- raster::raster(clim$wc2.1_10m_tmin_12)
+
+r<-raster::raster("wc2.1_10m_tmin_12.tif") # from https://www.worldclim.org/
+
 
 # Bring in stream concentration rasters
 # SOURCE: McDowell et al. (2021) https://doi.org/10.1002/gdj3.111
@@ -72,7 +75,7 @@ DRP<-raster::raster("DRP_Conc.tif")
 
 # Bring in N deposition and create raster
 # SOURCE: Ackerman et al. (2019) https://doi.org/10.1029/2018GB005990
-# DATA REPOSITORY: https://doi.org/10.13020/D6KX2R
+# DATA REPOSITORY: https://hdl.handle.net/11299/197613
 # UNITS: kg N/km2/yr
 
 Ndep <- read.csv("https://conservancy.umn.edu/bitstream/handle/11299/197613/inorganic_N_deposition.csv?sequence=28&isAllowed=y")
