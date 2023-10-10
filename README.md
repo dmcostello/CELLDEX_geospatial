@@ -43,15 +43,15 @@ ___
 
 
 ### `DRP_Conc.tif` and `NO3_Conc.tif`
-*Source*: McDowell et al. (2021) https://doi.org/10.1002/gdj3.111
+Source: McDowell et al. (2021) https://doi.org/10.1002/gdj3.111
 
-*Repository*: https://doi.org/10.25400/lincolnuninz.11894697
+Repository: https://doi.org/10.25400/lincolnuninz.11894697
 
 Rasters of dissolved reactive phosphorus (DRP) and nitrate (NO<sub>3</sub>) yield from watersheds (kg (NO<sub>3</sub>-N or DRP-P)/ha/yr). Coarse-scale maps are provided in the above source, and fine-scale rasters were provided by authors.
 
 
 ### `gbc1549-sup-0009-ts02.csv`
-*Source*: Mahowald et al. (2008)  https://doi.org/10.1029/2008GB003240
+Source: Mahowald et al. (2008)  https://doi.org/10.1029/2008GB003240
 
 Phosphorus dry deposition (kg P/km<sup>2</sup>/yr). See supporting information at above link for metadata. 
 
@@ -86,27 +86,40 @@ Names of predictor variables that were included in the boosted regression tree v
 
 __Other CELLDEX cotton data__
 
-*Source*: Tiegs et al. 2019 https://doi.org/10.1126/sciadv.aav0486
+Source: Tiegs et al. 2019 https://doi.org/10.1126/sciadv.aav0486
 
-*Repository*: https://github.com/dmcostello/CELLDEX2018 
+Repository: https://github.com/dmcostello/CELLDEX2018 
 
 Files: `CELLDEX_SITE_DATA.csv` `CELLDEX_TEMPERATURE.csv` `str_k.csv`
 
+
 __Climate and weather__
 
-*Source*: https://www.worldclim.org/
+Source: https://www.worldclim.org/
 
-*Repository*: `worldclim` package in R
+Repository: `worldclim` package in R
 
 Files: `wc2.1_10m_tmin_12.tif`
 
+
 __N deposition__
 
-*Source*: Ackerman et al. (2019) https://doi.org/10.1029/2018GB005990
+Source: Ackerman et al. (2019) https://doi.org/10.1029/2018GB005990
 
-*Repository*: https://doi.org/10.13020/D6KX2R
+Repository: https://hdl.handle.net/11299/197613
 
 Files: `inorganic_N_deposition.csv`
+
+
+__HydroBASINS__
+
+Source: Linke et al. (2019) https://doi.org/10.1038/s41597-019-0300-6
+
+Repository: https://www.hydrosheds.org/products/hydroatlas
+
+Files: `BasinATLAS_v10_lev12.shp`
+
+
 
 
 ___
@@ -115,9 +128,9 @@ ___
 
 ### `LeRoy.ExpandedDataset.Kvalues.csv`
 
-*Source*: LeRoy et al. (2020) https://doi.org/10.1111/1365-2745.13262
+Source: LeRoy et al. (2020) https://doi.org/10.1111/1365-2745.13262
 
-*Repository*: https://github.com/andrew-hipp/decomposition-phylogeny-2019
+Repository: https://github.com/andrew-hipp/decomposition-phylogeny-2019
 
 See repository for metadata
 
@@ -129,7 +142,7 @@ Additional information about leaf condition not included in `LeRoy.ExpandedDatas
 
 ### `TRY_traits.csv`
 
-*Source*: Data request from TRY Plant Trait Database (https://try-db.org/) 
+Source: Data request from TRY Plant Trait Database (https://try-db.org/) 
 
 |Parameter     |Definition   |Units  |
 | ------------- |-----------| -----|
