@@ -151,14 +151,14 @@ Source: Data request from TRY Plant Trait Database (https://try-db.org/)
 |N_Leaf_Med|Median nitrogen content of fresh leaves|% dry mass|
 |P_Leaf_Mn|Mean phosphorus content of fresh leaves|% dry mass|
 |P_Leaf_Med|Median phosphorus content of fresh leaves|% dry mass|
-|NtoP_Leaf_Mn|Mean N:P of fresh leaves||
-|NtoP_Leaf_Med|Median N:P of fresh leaves||
+|NtoP_Leaf_Mn|Mean N:P of fresh leaves|Mass ratio|
+|NtoP_Leaf_Med|Median N:P of fresh leaves|Mass ratio|
 |Thick_Mn|Mean fresh leaf thickness|mm|    
 |Thick_Med|Median fresh leaf thickness|mm| 
 |C_Leaf_Mn|Mean carbon content of fresh leaves|% dry mass|
 |C_Leaf_Med|Median carbon content of fresh leaves|% dry mass|
-|CtoN_Leaf_Mn|Mean C:N of fresh leaves||
-|CtoN_Leaf_Med|Median C:N of fresh leaves||
+|CtoN_Leaf_Mn|Mean C:N of fresh leaves|Mass ratio|
+|CtoN_Leaf_Med|Median C:N of fresh leaves|Mass ratio|
 |Ca_Leaf_Mn|Mean calcium content of fresh leaves|% dry mass|
 |Ca_Leaf_Med|Median calcium content of fresh leaves|% dry mass|
 
