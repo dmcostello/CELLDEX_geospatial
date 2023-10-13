@@ -5,9 +5,9 @@ NO3c,log,NO3 concentration,McDowell
 DRPc,log,DRP concentration,McDowell
 TPdep,none,TP deposition,Brahney & Mahowald
 TNdep,none,TN deposition,Ackerman
-dis_m3_pyr,log,Discharge,HydroBASINS
-dis_m3_pmn,log,Discharge,HydroBASINS
-dis_m3_pmx,log,Discharge,HydroBASINS
+dis_m3_pyr,log1,Discharge,HydroBASINS
+dis_m3_pmn,log1,Discharge,HydroBASINS
+dis_m3_pmx,log1,Discharge,HydroBASINS
 run_mm_syr,none,Runoff,HydroBASINS
 inu_pc_smn,log1,Inundation extent,HydroBASINS
 inu_pc_umn,log1,Inundation extent,HydroBASINS
@@ -25,13 +25,13 @@ ria_ha_usu,log,River area,HydroBASINS
 riv_tc_ssu,log,River volume,HydroBASINS
 riv_tc_usu,log,River volume,HydroBASINS
 gwt_cm_sav,none,Groundwater depth,HydroBASINS
-ele_mt_sav,log,Elevation,HydroBASINS
-ele_mt_uav,log,Elevation,HydroBASINS
+ele_mt_sav,none,Elevation,HydroBASINS
+ele_mt_uav,none,Elevation,HydroBASINS
 ele_mt_smn,none,Elevation,HydroBASINS
-ele_mt_smx,log,Elevation,HydroBASINS
+ele_mt_smx,none,Elevation,HydroBASINS
 slp_dg_sav,xten,Slope,HydroBASINS
 slp_dg_uav,xten,Slope,HydroBASINS
-sgr_dk_sav,log,Stream gradient,HydroBASINS
+sgr_dk_sav,log1,Stream gradient,HydroBASINS
 tmp_dc_syr,xten,Air temperature,HydroBASINS
 tmp_dc_uyr,xten,Air temperature,HydroBASINS
 tmp_dc_smn,xten,Air temperature,HydroBASINS

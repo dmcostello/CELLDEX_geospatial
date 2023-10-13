@@ -402,19 +402,6 @@ for(i in 1:length(mod_vars_nomo$Variables)){
 # Resort to original position
 grv2 <- grv2[order(grv2$Sort_code),]
 
-# Fix inf values (i.e., were 0 before log transform)
-grv2[is.infinite(grv2$log10ele_mt_sav),'log10ele_mt_sav'] <- NA
-grv2[is.infinite(grv2$log10ele_mt_uav),'log10ele_mt_uav'] <- NA
-grv2[is.infinite(grv2$log10ele_mt_smx),'log10ele_mt_smx'] <- NA
-grv2[is.infinite(grv2$log10sgr_dk_sav),'log10sgr_dk_sav'] <- NA
-grv2[is.infinite(grv2$log10dis_m3_pyr),'log10dis_m3_pyr'] <- NA
-grv2[is.infinite(grv2$log10dis_m3_pmn),'log10dis_m3_pmn'] <- NA
-grv2[is.infinite(grv2$log10dis_m3_pmx),'log10dis_m3_pmx'] <- NA
-
-grv2[grv2==-999] <- NA
-# Potentially log+1 transform ele_mt_sav, ele_mt_uav, ele_mt_smx, sgr_dk_sav, dis_m3_pyr, dis_m3_pmn, dis_m3_pmx
-# Also ele_mt_smn? Was previously untransformed b/c neg
-
 # Monthly averages and mean_mean_daily_temp as NA
 grv2$tempmonth <- NA
 grv2$precipmonth <- NA
@@ -436,10 +423,10 @@ grv2$gl_kd <- predict(Cgbm,newdata=grv2,n.trees=best.iter)
 
 # Produce the global raster image if cotton ln(kd)
 global_kd <- setValues(gr,grv2$gl_kd)
-global_kd<-mask(gr_skd,gr)
+global_kd<-mask(global_kd,gr)
 plot(global_kd)
 
-writeRaster(global_kd,"global_stream_lnkd.tif")
+writeRaster(global_kd,"global_stream_lnkd.tif",overwrite=T)
 
 ###############################################
 #### Figure 2 - Global raster of cotton kd ####
@@ -589,6 +576,11 @@ Fsum
 # Calculate pseudo-R2
 print(1-sum((Fdat$logk - predict(Fgbm, newdata=Fdat, n.trees=best.iter2))^2)/
         sum((Fdat$logk - mean(Fdat$logk))^2))
+
+
+##########################################
+#### Figure 3 - Litter validation BRT ####
+##########################################
 
 # Get grids of x variable values and predictions to make partial dependence plots
 lnpredk<-plot(Fgbm,i.var=c('ln_pred_k','Mesh.size'),return.grid=TRUE)
