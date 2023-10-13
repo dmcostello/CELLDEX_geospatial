@@ -7,14 +7,13 @@ library(sf)
 library(caret)
 library(gbm)
 library(pdp)
-library(tictoc)
 library(gridExtra)
 library(grid)
 library(fasterize)
 library(glwdr)
+library(parallel)
 
 set.seed(15)
-tic()
 
 ###########################################
 #### Retrieve CELLDEX data from GitHub ####
@@ -321,9 +320,9 @@ grid.arrange(ps1,ps2,ps3,ps4,ps5,ps6, ncol = 1,left=textGrob(bquote('ln' ~K[d]),
 dev.off()
 
 
-###############################################
-#### Figure 2 - Global raster of cotton kd ####
-###############################################
+##################################################
+#### Generate global predictions of cotton kd ####
+##################################################
 
 # Extract values from Hydrobasins
 # Rasterize basins with WorldClim raster as template using fasterize package
@@ -339,21 +338,18 @@ rm(lakes)
 grv<-as.data.frame(gr,xy=T)
 colnames(grv)<-c("longitude","latitude","HYBAS_ID")
 
-#Remove any points that have no HydroBASINS ID (i.e., not on land)
-grv2 <- grv[!is.na(grv$HYBAS_ID),]
+# Resample nutrient rasters to correct resolution
+NO3res <- raster::resample(NO3,r)
+DRPres <- raster::resample(DRP,r)
+TNdepres <- raster::resample(TNdep,r)
 
-# Turn map extent into spatial points data frame
-gl_pts<-SpatialPointsDataFrame(grv2[,c("longitude","latitude")],grv2,
-                               proj4string=CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"))
+# Stack and merge nutrient rasters
+nstack<-raster::stack(NO3res,DRPres,TNdepres,TPdep_interp)
+v<-as.data.frame(nstack)
+colnames(v)<-c("NO3c","DRPc","TNdep","TPdep")
 
-
-# Join nutrient data at global raster locations
-for(i in 1:length(nut_data)){
-  tempdat <- raster::extract(nut_data[[i]],gl_pts,df=T)
-  grv2 <- cbind(grv2,tempdat[,2])
-  colnames(grv2)[3+i] <- names(nut_data)[i]
-}
-gl_pts@data<-cbind(gl_pts@data,grv2[,4:7])
+grv2 <- cbind(grv,v)
+grv2$Sort_code <- seq(1,dim(grv2)[1])
 
 # Remove monthly variables for global prediction
 # Variables were not among most important in BRT
@@ -366,79 +362,88 @@ mod_vars_nomo <- mod_vars[!mod_vars$Variables %in% c("tempmonth",
                                                      "soilwatermonth")&
                             mod_vars$Source=="HydroBASINS",]
 
-#Build dataframe from HydroBASINS
+# Build dataframe from HydroBASINS
 basin_dat <- as.data.frame(basins1)
 
-
-# Build data and complete transformations 
+# Build HydroBASINS data and complete transformations 
 for(i in 1:length(mod_vars_nomo$Variables)){
   if(mod_vars_nomo$Transform[i]=="none"){
     tempname <- mod_vars_nomo$Variables[i]
     tempdat <- cbind(basin_dat$HYBAS_ID,basin_dat[,mod_vars_nomo$Variables[i]])
-    gl_pts@data <- merge(gl_pts@data,tempdat,all.x=T,by.x="HYBAS_ID",by.y=1)
-    colnames(gl_pts@data)[7+i] = tempname
+    grv2 <- merge(grv2,tempdat,all.x=T,by.x="HYBAS_ID",by.y=1)
+    colnames(grv2)[8+i] = tempname
   } else
     if(mod_vars_nomo$Transform[i]=="log"){
       tempname <- paste0("log10",mod_vars_nomo$Variables[i])
       tempdat <- cbind(basin_dat$HYBAS_ID,log10(basin_dat[,mod_vars_nomo$Variables[i]]))
-      gl_pts@data <- merge(gl_pts@data,tempdat,all.x=T,by.x="HYBAS_ID",by.y=1)
-      colnames(gl_pts@data)[7+i] = tempname
+      grv2 <- merge(grv2,tempdat,all.x=T,by.x="HYBAS_ID",by.y=1)
+      colnames(grv2)[8+i] = tempname
     } else
       if(mod_vars_nomo$Transform[i]=="log1"){
         tempname <- paste0("log10",mod_vars_nomo$Variables[i])
         tempdat <- cbind(basin_dat$HYBAS_ID,log10(basin_dat[,mod_vars_nomo$Variables[i]]+1))
-        gl_pts@data <- merge(gl_pts@data,tempdat,all.x=T,by.x="HYBAS_ID",by.y=1)
-        colnames(gl_pts@data)[7+i] = tempname
+        grv2 <- merge(grv2,tempdat,all.x=T,by.x="HYBAS_ID",by.y=1)
+        colnames(grv2)[8+i] = tempname
       } else
         if(mod_vars_nomo$Transform[i]=="xten"){
           tempname <- mod_vars_nomo$Variables[i]
           tempdat <- cbind(basin_dat$HYBAS_ID,basin_dat[,mod_vars_nomo$Variables[i]]/10)
-          gl_pts@data <- merge(gl_pts@data,tempdat,all.x=T,by.x="HYBAS_ID",by.y=1)
-          colnames(gl_pts@data)[7+i] = tempname
+          grv2 <- merge(grv2,tempdat,all.x=T,by.x="HYBAS_ID",by.y=1)
+          colnames(grv2)[8+i] = tempname
         } else
           if(mod_vars_nomo$Transform[i]=="xhund"){
           tempname <- mod_vars_nomo$Variables[i]
         tempdat <- cbind(basin_dat$HYBAS_ID,basin_dat[,mod_vars_nomo$Variables[i]]/100)
-        gl_pts@data <- merge(gl_pts@data,tempdat,all.x=T,by.x="HYBAS_ID",by.y=1)
-        colnames(gl_pts@data)[7+i] = tempname
+        grv2 <- merge(grv2,tempdat,all.x=T,by.x="HYBAS_ID",by.y=1)
+        colnames(grv2)[8+i] = tempname
         } 
 }
 
-# Fix inf values (i.e., were 0 before log transform)
-gl_pts@data[is.infinite(gl_pts@data$log10ele_mt_sav),'log10ele_mt_sav'] <- NA
-gl_pts@data[is.infinite(gl_pts@data$log10ele_mt_uav),'log10ele_mt_uav'] <- NA
-gl_pts@data[is.infinite(gl_pts@data$log10ele_mt_smx),'log10ele_mt_smx'] <- NA
-gl_pts@data[is.infinite(gl_pts@data$log10sgr_dk_sav),'log10sgr_dk_sav'] <- NA
-gl_pts@data[is.infinite(gl_pts@data$log10dis_m3_pyr),'log10dis_m3_pyr'] <- NA
-gl_pts@data[is.infinite(gl_pts@data$log10dis_m3_pmn),'log10dis_m3_pmn'] <- NA
-gl_pts@data[is.infinite(gl_pts@data$log10dis_m3_pmx),'log10dis_m3_pmx'] <- NA
+# Resort to original position
+grv2 <- grv2[order(grv2$Sort_code),]
 
-gl_pts@data[gl_pts@data==-999] <- NA
+# Fix inf values (i.e., were 0 before log transform)
+grv2[is.infinite(grv2$log10ele_mt_sav),'log10ele_mt_sav'] <- NA
+grv2[is.infinite(grv2$log10ele_mt_uav),'log10ele_mt_uav'] <- NA
+grv2[is.infinite(grv2$log10ele_mt_smx),'log10ele_mt_smx'] <- NA
+grv2[is.infinite(grv2$log10sgr_dk_sav),'log10sgr_dk_sav'] <- NA
+grv2[is.infinite(grv2$log10dis_m3_pyr),'log10dis_m3_pyr'] <- NA
+grv2[is.infinite(grv2$log10dis_m3_pmn),'log10dis_m3_pmn'] <- NA
+grv2[is.infinite(grv2$log10dis_m3_pmx),'log10dis_m3_pmx'] <- NA
+
+grv2[grv2==-999] <- NA
 # Potentially log+1 transform ele_mt_sav, ele_mt_uav, ele_mt_smx, sgr_dk_sav, dis_m3_pyr, dis_m3_pmn, dis_m3_pmx
 # Also ele_mt_smn? Was previously untransformed b/c neg
 
 # Monthly averages and mean_mean_daily_temp as NA
-gl_pts@data$tempmonth <- NA
-gl_pts@data$precipmonth <- NA
-gl_pts@data$PETmonth <- NA
-gl_pts@data$AETmonth <- 
-gl_pts@data$moist_indexmonth <- NA
-gl_pts@data$snowmonth <- NA
-gl_pts@data$soilwatermonth <- NA
-gl_pts@data$mean_mean_daily_temp <- NA
+grv2$tempmonth <- NA
+grv2$precipmonth <- NA
+grv2$PETmonth <- NA
+grv2$AETmonth <- NA
+grv2$moist_indexmonth <- NA
+grv2$snowmonth <- NA
+grv2$soilwatermonth <- NA
+grv2$mean_mean_daily_temp <- NA
 
 # Log transform nutrients
-gl_pts@data$log10NO3c <- log10(gl_pts@data$NO3c)
-gl_pts@data$log10DRPc <- log10(gl_pts@data$DRPc)
-gl_pts@data$log10TNdep <- log10(gl_pts@data$TNdep)
-gl_pts@data$log10TPdep <- log10(gl_pts@data$TPdep)
+grv2$log10NO3c <- log10(grv2$NO3c)
+grv2$log10DRPc <- log10(grv2$DRPc)
+grv2$log10TNdep <- log10(grv2$TNdep)
+grv2$log10TPdep <- log10(grv2$TPdep)
 
 # Make predictions of kd
-gl_pts@data$gl_kd <- predict(Cgbm,newdata=gl_pts@data,n.trees=best.iter)
+grv2$gl_kd <- predict(Cgbm,newdata=grv2,n.trees=best.iter)
 
-# Make raster of log(kd)
-global_kd <- raster::rasterize(gl_pts,gr,field="gl_kd")
+# Produce the global raster image if cotton ln(kd)
+global_kd <- setValues(gr,grv2$gl_kd)
+global_kd<-mask(gr_skd,gr)
 plot(global_kd)
+
+writeRaster(global_kd,"global_stream_lnkd.tif")
+
+###############################################
+#### Figure 2 - Global raster of cotton kd ####
+###############################################
 
 
 ########################################
@@ -642,4 +647,3 @@ pdf(file = "validation_pdps_6_meshsize2.pdf",width=4,height=12)
 grid.arrange(pf1,pf2,pf3,pf4,pf5,pf6, ncol = 1,left=textGrob(bquote('ln' ~K[d]),rot=90))
 dev.off()
 
-toc()
