@@ -445,6 +445,21 @@ writeRaster(global_kd,"global_stream_lnkd.tif")
 #### Figure 2 - Global raster of cotton kd ####
 ###############################################
 
+# Project raster in Mollenweide
+glkd_moll<-projectRaster(global_kd,crs="+proj=moll")
+
+mask_glkd_moll <- as.data.frame(glkd_moll,xy=T)
+
+mask_glkd <- as.data.frame(global_kd,xy=T)
+
+# make map figures in ggplot
+map<-ggplot() + borders(fill="lightgray") + geom_raster(data = mask_glkd , aes(x = x, y = y,fill = layer)) + 
+  scale_fill_gradientn(colors=rev(c("lightgray","darkred", "red", "orange", "yellow","darkgreen","green", "lightgreen", "lightblue","blue","violet","lightgray")),na.value=NA,name=bquote('ln Mean Annual Stream' ~K[d]))+
+  xlab("") + ylab("") + theme(legend.position = "none",legend.box.background = element_blank(),legend.background = element_blank()) + theme(panel.background = element_rect(fill = "white",colour = "white",size = 1, linetype = "solid")) +
+  theme(axis.text.x=element_blank()) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.ticks.x=element_blank()) + theme(axis.ticks.y=element_blank()) + theme(axis.text.y=element_blank())  
+map
+
 
 ########################################
 #### Load and join leaf litter data ####
