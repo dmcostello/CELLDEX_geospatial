@@ -12,6 +12,8 @@ library(grid)
 library(fasterize)
 library(glwdr)
 library(parallel)
+library(ggplot2)
+library(cowplot)
 
 set.seed(15)
 
@@ -120,11 +122,8 @@ TPdep_interp <- raster::interpolate(r, TPdep)
 
 basins<-st_read("BasinATLAS_v10_lev12.shp")
 
-# Subset watersheds to get only those with >1 ha of upstream river area
-basins1<-subset(basins,basins$ria_ha_ssu>1)
-
 # Transform subwatershed polygons to equal distance Mollenweide projection
-bas_moll <- st_transform(basins1, "+proj=moll")
+bas_moll <- st_transform(basins, "+proj=moll")
 
 
 #################################
@@ -326,13 +325,7 @@ dev.off()
 
 # Extract values from Hydrobasins
 # Rasterize basins with WorldClim raster as template using fasterize package
-gr<-fasterize(basins1,r,field = "HYBAS_ID",fun="max")
-
-# Load large lakes from glwdr to mask out lake pixels
-lakes <- glwd_load(level = 1)
-crs(lakes)<-crs(Cpts)
-gr<-mask(gr,lakes,inverse=T)
-rm(lakes)
+gr<-fasterize(basins,r,field = "HYBAS_ID",fun="max")
 
 # Convert raster object to dataframe 
 grv<-as.data.frame(gr,xy=T)
@@ -363,7 +356,7 @@ mod_vars_nomo <- mod_vars[!mod_vars$Variables %in% c("tempmonth",
                             mod_vars$Source=="HydroBASINS",]
 
 # Build dataframe from HydroBASINS
-basin_dat <- as.data.frame(basins1)
+basin_dat <- as.data.frame(basins)
 
 # Build HydroBASINS data and complete transformations 
 for(i in 1:length(mod_vars_nomo$Variables)){
@@ -417,16 +410,37 @@ grv2$log10NO3c <- log10(grv2$NO3c)
 grv2$log10DRPc <- log10(grv2$DRPc)
 grv2$log10TNdep <- log10(grv2$TNdep)
 grv2$log10TPdep <- log10(grv2$TPdep)
+grv2$log10TPdep[is.nan(grv2$log10TPdep)] <- NA
 
 # Make predictions of kd
 grv2$gl_kd <- predict(Cgbm,newdata=grv2,n.trees=best.iter)
 
-# Produce the global raster image if cotton ln(kd)
-global_kd <- setValues(gr,grv2$gl_kd)
-global_kd<-mask(global_kd,gr)
-plot(global_kd)
+# Turn predictions to NA where no Hydrobasins ID
+grv2$gl_kd[is.na(grv2$HYBAS_ID)]<-NA
 
-writeRaster(global_kd,"global_stream_lnkd.tif",overwrite=T)
+# Produce the global raster image if cotton ln(kd)
+values<-grv2$gl_kd
+global_kd <- setValues(gr,values)
+
+# Load large lakes from glwdr to mask out lake pixels
+lakes <- glwd_load(level = 1)
+crs(lakes)<-crs(Cpts)
+global_kd<-mask(global_kd,lakes,inverse=T)
+
+# Subset watersheds to get only those with >1 ha of upstream river area
+basins1<-subset(basins,dis_m3_pyr<0.026)
+gr2<-fasterize(basins1,r,field = "ENDO")
+gr2<-gr2*0
+
+#bring in shapefile boundary of Antarctica and convert to raster
+a<-st_read("ATA_adm0.shp")
+gr3<-fasterize(a,r,field="ID_0")
+gr3<-gr3*0
+
+# do inverse mask of ln mean annual stream Kd to add subwatersheds that we did not predict stream Kd for including Antarctica and set value to the minimum value of predicted ln stream Kd from our model
+global_kd<-mask(global_kd, inverse=T,gr2,updatevalue=-5.740716,updateNA=T)
+global_kd<-mask(global_kd, inverse=T,gr3,updatevalue=-5.740716,updateNA=T)
+
 
 ###############################################
 #### Figure 2 - Global raster of cotton kd ####
@@ -435,18 +449,47 @@ writeRaster(global_kd,"global_stream_lnkd.tif",overwrite=T)
 # Project raster in Mollenweide
 glkd_moll<-projectRaster(global_kd,crs="+proj=moll")
 
-mask_glkd_moll <- as.data.frame(glkd_moll,xy=T)
+# Make dataframe of ln mean stream Kd raster and create column of 0s to represent watersheds with predictions
+mask_glkd <-as.data.frame(glkd_moll,xy=TRUE)
+colnames(mask_glkd)[3]<-"ln.Mean.Stream.Kd"
 
-mask_glkd <- as.data.frame(global_kd,xy=T)
+# Make a column of mask_glkd called land for plotting
+mask_glkd$land<-rep(NA,nrow(mask_glkd))
+mask_glkd$land[!is.na(mask_glkd$ln.Mean.Stream.Kd)]<-1
 
-# make map figures in ggplot
-map<-ggplot() + borders(fill="lightgray") + geom_raster(data = mask_glkd , aes(x = x, y = y,fill = layer)) + 
-  scale_fill_gradientn(colors=rev(c("lightgray","darkred", "red", "orange", "yellow","darkgreen","green", "lightgreen", "lightblue","blue","violet","lightgray")),na.value=NA,name=bquote('ln Mean Annual Stream' ~K[d]))+
+# Bring in point locations from Kattge et al., 2011 and transform to Mollweide
+fs <- read.csv("gcb13609-sup-0001-appendixs1.latlon.csv")
+fspts<-SpatialPointsDataFrame(fs[,3:2],fs,proj4string=CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"))
+fspts_moll<-spTransform(fspts,"+proj=moll")
+fsxy<-as.data.frame(coordinates(fspts_moll))
+colnames(fsxy)<-c("x","y")
+
+# Transform stream points to Mollweide
+Cpts_moll<-spTransform(Cpts,"+proj=moll")
+xy<-as.data.frame(coordinates(Cpts_moll))
+colnames(xy)<-c("x","y")
+
+# Make map figures in ggplot
+map<-ggplot() + borders(fill="lightgray") + geom_raster(data = mask_glkd , aes(x = x, y = y,fill = ln.Mean.Stream.Kd)) + 
+  scale_fill_gradientn(colors=rev(c("lightgray","darkred", "red", "orange", "yellow","darkgreen","darkolivegreen3","darkolivegreen2", "lightgreen","blue","violet","lightgray")),na.value=NA,name=bquote('ln Mean Annual Stream' ~K[d]))+
+  xlab("") + ylab("") + theme(legend.position = c(0.8, 0.15),legend.box.background = element_blank(),legend.background = element_blank()) + theme(panel.background = element_rect(fill = "white",colour = "white",size = 1, linetype = "solid")) +
+  theme(axis.text.x=element_blank()) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.ticks.x=element_blank()) + theme(axis.ticks.y=element_blank()) + theme(axis.text.y=element_blank())  
+
+inset<-ggplot() + geom_tile(data = dplyr::filter(mask_glkd, !is.na(land)),aes(x = x, y = y), fill = "cornsilk2") +
+  geom_point(data=xy,aes(x=x,y=y),col="red",fill="red",size=3,shape=21) + 
+  geom_point(data=fsxy,aes(x=x,y=y),col="black",fill="black",size=3,shape=21) +
   xlab("") + ylab("") + theme(legend.position = "none",legend.box.background = element_blank(),legend.background = element_blank()) + theme(panel.background = element_rect(fill = "white",colour = "white",size = 1, linetype = "solid")) +
   theme(axis.text.x=element_blank()) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   theme(axis.ticks.x=element_blank()) + theme(axis.ticks.y=element_blank()) + theme(axis.text.y=element_blank())  
-map
 
+pdf("global_kd.pdf",width=20,height=16)
+plot(map)
+dev.off()
+
+pdf("sample_sites.pdf",width=20,height=16)
+plot(inset)
+dev.off()
 
 ########################################
 #### Load and join leaf litter data ####
