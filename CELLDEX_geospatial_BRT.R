@@ -244,80 +244,6 @@ head(sum,20)
 print(1-sum((Cdat$logk - predict(Cgbm, newdata=Cdat, n.trees=best.iter))^2)/
             sum((Cdat$logk - mean(Cdat$logk))^2))
 
-#######################################
-#### Figure 1 - Cotton BRT results ####
-#######################################
-
-# Get grids of x variable values and predictions to make partial dependence plots
-drp<-plot(Cgbm,i.var='log10DRPc',return.grid=TRUE)
-pet<-plot(Cgbm,i.var='pet_mm_uyr',return.grid=TRUE)
-meantemp<-plot(Cgbm,i.var='mean_mean_daily_temp',return.grid=TRUE)
-limn<-plot(Cgbm,i.var='log10lka_pc_sse',return.grid=TRUE)
-no3<-plot(Cgbm,i.var='log10NO3c',return.grid=TRUE)
-mntmp<-plot(Cgbm,i.var='tmp_dc_smn',return.grid=TRUE)
-
-# Get quartiles of the x variable to mark in plots
-drprug<-as.data.frame(quantile(Cdat$log10DRPc,probs = seq(0, 1, 0.25),na.rm=T))
-colnames(drprug)[1]<-"rug"
-petrug<-as.data.frame(quantile(Cdat$pet_mm_uyr),probs = seq(0, 1, 0.25))
-colnames(petrug)[1]<-"rug"
-mtrug<-as.data.frame(quantile(Cdat$mean_mean_daily_temp),probs = seq(0, 1, 0.25))
-colnames(mtrug)[1]<-"rug"
-limnrug<-as.data.frame(quantile(Cdat$log10lka_pc_sse,probs=seq(0, 1, 0.25)))
-colnames(limnrug)[1]<-"rug"
-limnrug[2,1]<-0.01
-no3rug<-as.data.frame(quantile(Cdat$log10NO3c,probs=seq(0, 1, 0.25),na.rm=T))
-colnames(no3rug)[1]<-"rug"
-mntrug<-as.data.frame(quantile(Cdat$tmp_dc_smn,probs=seq(0, 1, 0.25),na.rm=T))
-colnames(mntrug)[1]<-"rug"
-
-# Make partial dependence plots in ggplot
-ps1<-ggplot(data = drp, aes(log10DRPc, y)) +
-  geom_point(aes(x=rug,y=min(drp$y)),drprug,color="gray",shape = 15) +
-  geom_line(color = "steelblue", size = 1) +
-  ylab("") + 
-  xlab(expression(~log[10]~"Stream dissolved reactive P kg ha"^"-1"~"yr"^"-1")) +
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
-
-ps2<-ggplot(data = pet, aes(pet_mm_uyr, y)) +
-  geom_point(aes(x=rug,y=min(pet$y)),petrug,color="gray",shape = 15) +
-  geom_line(color = "steelblue", size = 1) +
-  ylab("") + 
-  labs(x=bquote('Upstream mean PET mm yr'^'-1')) +
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
-
-ps3<-ggplot(data = meantemp, aes(mean_mean_daily_temp, y)) +
-  geom_point(aes(x=rug,y=min(meantemp$y)),mtrug,color="gray",shape = 15) +
-  geom_line(color = "steelblue", size = 1) +
-  ylab("") + 
-  xlab(expression(x="Mean daily stream temp during deployment "*degree*C)) +
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
-
-ps4<-ggplot(data = limn, aes(log10lka_pc_sse, y)) +
-  geom_point(aes(x=rug,y=min(limn$y)),limnrug,color="gray",shape = 15) +
-  geom_line(color = "steelblue", size = 1) +
-  ylab("") + labs(x=~log[10]~"Subwatershed lake area %") +
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
-
-ps5<-ggplot(data = no3, aes(log10NO3c, y)) +
-  geom_point(aes(x=rug,y=min(no3$y)),no3rug,color="gray",shape = 15) +
-  geom_line(color = "steelblue", size = 1) +
-  ylab("") + 
-  xlab(expression(~log[10]~"Stream NO"["2"]~"- NO"["3"]~"kg ha"^"-1"~"yr"^"-1")) +
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
-
-ps6<-ggplot(data = mntmp, aes(tmp_dc_smn, y)) +
-  geom_point(aes(x=rug,y=min(mntmp$y)),mntrug,color="gray",shape = 15) +
-  geom_line(color = "steelblue", size = 1) +
-  ylab("") + 
-  xlab(expression("Subwatershed minimum temperature "*degree*C)) +
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
-
-# Make trellis of the top 6 partial dependence plots
-pdf(file = "stream_pdps_6.pdf",width=4,height=10)
-grid.arrange(ps1,ps2,ps3,ps4,ps5,ps6, ncol = 1,left=textGrob(bquote('ln' ~K[d]),rot=90))
-dev.off()
-
 
 ##################################################
 #### Generate global predictions of cotton kd ####
@@ -344,8 +270,9 @@ colnames(v)<-c("NO3c","DRPc","TNdep","TPdep")
 grv2 <- cbind(grv,v)
 grv2$Sort_code <- seq(1,dim(grv2)[1])
 
-# Remove monthly variables for global prediction
+# Make month of deployment variables for global prediction NA
 # Variables were not among most important in BRT
+# Global predictions are independent of month of deployment
 mod_vars_nomo <- mod_vars[!mod_vars$Variables %in% c("tempmonth",
                                                      "precipmonth",
                                                      "PETmonth",
@@ -418,7 +345,7 @@ grv2$gl_kd <- predict(Cgbm,newdata=grv2,n.trees=best.iter)
 # Turn predictions to NA where no Hydrobasins ID
 grv2$gl_kd[is.na(grv2$HYBAS_ID)]<-NA
 
-# Produce the global raster image if cotton ln(kd)
+# Produce the global raster image of cotton ln(kd)
 values<-grv2$gl_kd
 global_kd <- setValues(gr,values)
 
@@ -427,69 +354,25 @@ lakes <- glwd_load(level = 1)
 crs(lakes)<-crs(Cpts)
 global_kd<-mask(global_kd,lakes,inverse=T)
 
-# Subset watersheds to get only those with >1 ha of upstream river area
-basins1<-subset(basins,dis_m3_pyr<0.026)
-gr2<-fasterize(basins1,r,field = "ENDO")
+# Subset watersheds to map only those with average annual discharge greater than 
+# the minimum stream size sampled by CELLDEX
+CELLDEXmin <- min(Cdat$log10dis_m3_pyr)
+basins_min<-subset(basins,dis_m3_pyr<CELLDEXmin)
+gr2<-fasterize(basins_min,r,field = "ENDO")
 gr2<-gr2*0
 
-#bring in shapefile boundary of Antarctica and convert to raster
-a<-st_read("ATA_adm0.shp")
-gr3<-fasterize(a,r,field="ID_0")
+# Bring in shapefile boundary of Antarctica and convert to raster
+a<-st_read("geoBoundaries-ATA-ADM0.shp")
+gr3<-fasterize(a,r)
 gr3<-gr3*0
 
-# do inverse mask of ln mean annual stream Kd to add subwatersheds that we did not predict stream Kd for including Antarctica and set value to the minimum value of predicted ln stream Kd from our model
-global_kd<-mask(global_kd, inverse=T,gr2,updatevalue=-5.740716,updateNA=T)
-global_kd<-mask(global_kd, inverse=T,gr3,updatevalue=-5.740716,updateNA=T)
+# do inverse mask of ln mean annual stream Kd to add subwatersheds that we did 
+# not predict stream Kd for including Antarctica and set value to the minimum value 
+# of predicted ln stream Kd from our model
+min_predkd <- min(grv2$gl_kd)
+global_kd<-mask(global_kd, inverse=T,gr2,updatevalue=min_predkd,updateNA=T)
+global_kd<-mask(global_kd, inverse=T,gr3,updatevalue=min_predkd,updateNA=T)
 
-
-###############################################
-#### Figure 2 - Global raster of cotton kd ####
-###############################################
-
-# Project raster in Mollenweide
-glkd_moll<-projectRaster(global_kd,crs="+proj=moll")
-
-# Make dataframe of ln mean stream Kd raster and create column of 0s to represent watersheds with predictions
-mask_glkd <-as.data.frame(glkd_moll,xy=TRUE)
-colnames(mask_glkd)[3]<-"ln.Mean.Stream.Kd"
-
-# Make a column of mask_glkd called land for plotting
-mask_glkd$land<-rep(NA,nrow(mask_glkd))
-mask_glkd$land[!is.na(mask_glkd$ln.Mean.Stream.Kd)]<-1
-
-# Bring in point locations from Kattge et al., 2011 and transform to Mollweide
-fs <- read.csv("gcb13609-sup-0001-appendixs1.latlon.csv")
-fspts<-SpatialPointsDataFrame(fs[,3:2],fs,proj4string=CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"))
-fspts_moll<-spTransform(fspts,"+proj=moll")
-fsxy<-as.data.frame(coordinates(fspts_moll))
-colnames(fsxy)<-c("x","y")
-
-# Transform stream points to Mollweide
-Cpts_moll<-spTransform(Cpts,"+proj=moll")
-xy<-as.data.frame(coordinates(Cpts_moll))
-colnames(xy)<-c("x","y")
-
-# Make map figures in ggplot
-map<-ggplot() + borders(fill="lightgray") + geom_raster(data = mask_glkd , aes(x = x, y = y,fill = ln.Mean.Stream.Kd)) + 
-  scale_fill_gradientn(colors=rev(c("lightgray","darkred", "red", "orange", "yellow","darkgreen","darkolivegreen3","darkolivegreen2", "lightgreen","blue","violet","lightgray")),na.value=NA,name=bquote('ln Mean Annual Stream' ~K[d]))+
-  xlab("") + ylab("") + theme(legend.position = c(0.8, 0.15),legend.box.background = element_blank(),legend.background = element_blank()) + theme(panel.background = element_rect(fill = "white",colour = "white",size = 1, linetype = "solid")) +
-  theme(axis.text.x=element_blank()) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  theme(axis.ticks.x=element_blank()) + theme(axis.ticks.y=element_blank()) + theme(axis.text.y=element_blank())  
-
-inset<-ggplot() + geom_tile(data = dplyr::filter(mask_glkd, !is.na(land)),aes(x = x, y = y), fill = "cornsilk2") +
-  geom_point(data=xy,aes(x=x,y=y),col="red",fill="red",size=3,shape=21) + 
-  geom_point(data=fsxy,aes(x=x,y=y),col="black",fill="black",size=3,shape=21) +
-  xlab("") + ylab("") + theme(legend.position = "none",legend.box.background = element_blank(),legend.background = element_blank()) + theme(panel.background = element_rect(fill = "white",colour = "white",size = 1, linetype = "solid")) +
-  theme(axis.text.x=element_blank()) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  theme(axis.ticks.x=element_blank()) + theme(axis.ticks.y=element_blank()) + theme(axis.text.y=element_blank())  
-
-pdf("global_kd.pdf",width=20,height=16)
-plot(map)
-dev.off()
-
-pdf("sample_sites.pdf",width=20,height=16)
-plot(inset)
-dev.off()
 
 ########################################
 #### Load and join leaf litter data ####
@@ -619,6 +502,127 @@ Fsum
 # Calculate pseudo-R2
 print(1-sum((Fdat$logk - predict(Fgbm, newdata=Fdat, n.trees=best.iter2))^2)/
         sum((Fdat$logk - mean(Fdat$logk))^2))
+
+
+#######################################
+#### Figure 1 - Cotton BRT results ####
+#######################################
+
+# Get grids of x variable values and predictions to make partial dependence plots
+meantemp<-plot(Cgbm,i.var='mean_mean_daily_temp',return.grid=TRUE)
+drp<-plot(Cgbm,i.var='log10DRPc',return.grid=TRUE)
+pet<-plot(Cgbm,i.var='pet_mm_uyr',return.grid=TRUE)
+limn<-plot(Cgbm,i.var='log10lka_pc_sse',return.grid=TRUE)
+no3<-plot(Cgbm,i.var='log10NO3c',return.grid=TRUE)
+mntmp<-plot(Cgbm,i.var='tmp_dc_smn',return.grid=TRUE)
+
+# Get quartiles of the x variable to mark in plots
+mtrug<-as.data.frame(quantile(Cdat$mean_mean_daily_temp),probs = seq(0, 1, 0.25))
+colnames(mtrug)[1]<-"rug"
+drprug<-as.data.frame(quantile(Cdat$log10DRPc,probs = seq(0, 1, 0.25),na.rm=T))
+colnames(drprug)[1]<-"rug"
+petrug<-as.data.frame(quantile(Cdat$pet_mm_uyr),probs = seq(0, 1, 0.25))
+colnames(petrug)[1]<-"rug"
+limnrug<-as.data.frame(quantile(Cdat$log10lka_pc_sse,probs=seq(0, 1, 0.25)))
+colnames(limnrug)[1]<-"rug"
+limnrug[2,1]<-0.01
+no3rug<-as.data.frame(quantile(Cdat$log10NO3c,probs=seq(0, 1, 0.25),na.rm=T))
+colnames(no3rug)[1]<-"rug"
+mntrug<-as.data.frame(quantile(Cdat$tmp_dc_smn,probs=seq(0, 1, 0.25),na.rm=T))
+colnames(mntrug)[1]<-"rug"
+
+# Make partial dependence plots in ggplot
+ps1<-ggplot(data = meantemp, aes(mean_mean_daily_temp, y)) +
+  geom_point(aes(x=rug,y=min(meantemp$y)),mtrug,color="gray",shape = 15) +
+  geom_line(color = "steelblue", size = 1) +
+  ylab("") + 
+  xlab(expression(x="Mean daily stream temp during deployment "*degree*C)) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
+
+ps2<-ggplot(data = drp, aes(log10DRPc, y)) +
+  geom_point(aes(x=rug,y=min(drp$y)),drprug,color="gray",shape = 15) +
+  geom_line(color = "steelblue", size = 1) +
+  ylab("") + 
+  xlab(expression(~log[10]~"Stream dissolved reactive P kg ha"^"-1"~"yr"^"-1")) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
+
+ps3<-ggplot(data = pet, aes(pet_mm_uyr, y)) +
+  geom_point(aes(x=rug,y=min(pet$y)),petrug,color="gray",shape = 15) +
+  geom_line(color = "steelblue", size = 1) +
+  ylab("") + 
+  labs(x=bquote('Upstream mean PET mm yr'^'-1')) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
+
+ps4<-ggplot(data = limn, aes(log10lka_pc_sse, y)) +
+  geom_point(aes(x=rug,y=min(limn$y)),limnrug,color="gray",shape = 15) +
+  geom_line(color = "steelblue", size = 1) +
+  ylab("") + labs(x=~log[10]~"Subwatershed lake area %") +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
+
+ps5<-ggplot(data = no3, aes(log10NO3c, y)) +
+  geom_point(aes(x=rug,y=min(no3$y)),no3rug,color="gray",shape = 15) +
+  geom_line(color = "steelblue", size = 1) +
+  ylab("") + 
+  xlab(expression(~log[10]~"Stream NO"["2"]~"- NO"["3"]~"kg ha"^"-1"~"yr"^"-1")) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
+
+ps6<-ggplot(data = mntmp, aes(tmp_dc_smn, y)) +
+  geom_point(aes(x=rug,y=min(mntmp$y)),mntrug,color="gray",shape = 15) +
+  geom_line(color = "steelblue", size = 1) +
+  ylab("") + 
+  xlab(expression("Subwatershed minimum temperature "*degree*C)) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
+
+# Make trellis of the top 6 partial dependence plots
+pdf(file = "stream_pdps_6.pdf",width=4,height=10)
+grid.arrange(ps1,ps2,ps3,ps4,ps5,ps6, ncol = 1,left=textGrob(bquote('ln' ~K[d]),rot=90))
+dev.off()
+
+
+###############################################
+#### Figure 2 - Global raster of cotton kd ####
+###############################################
+
+# Project raster in Mollenweide
+glkd_moll<-projectRaster(global_kd,crs="+proj=moll")
+
+# Make dataframe of ln mean stream Kd raster and create column of 0s to represent watersheds with predictions
+mask_glkd <-as.data.frame(glkd_moll,xy=TRUE)
+colnames(mask_glkd)[3]<-"ln.Mean.Stream.Kd"
+
+# Make a column of mask_glkd called land for plotting
+mask_glkd$land<-rep(NA,nrow(mask_glkd))
+mask_glkd$land[!is.na(mask_glkd$ln.Mean.Stream.Kd)]<-1
+
+# Bring in point locations where litter decomposition studies were done
+fsxy<-as.data.frame(coordinates(litter_moll))
+colnames(fsxy)<-c("x","y")
+
+# Transform stream points to Mollweide
+xy<-as.data.frame(coordinates(C_moll))
+colnames(xy)<-c("x","y")
+
+# Make map figures in ggplot
+map<-ggplot() + borders(fill="lightgray") + geom_raster(data = mask_glkd , aes(x = x, y = y,fill = ln.Mean.Stream.Kd)) + 
+  scale_fill_gradientn(colors=rev(c("lightgray","darkred", "red", "orange", "yellow","darkgreen","darkolivegreen3","darkolivegreen2", "lightgreen","blue","violet","lightgray")),na.value=NA,name=bquote('ln Mean Annual Stream' ~K[d]))+
+  xlab("") + ylab("") + theme(legend.position = c(0.8, 0.15),legend.box.background = element_blank(),legend.background = element_blank()) + theme(panel.background = element_rect(fill = "white",colour = "white",size = 1, linetype = "solid")) +
+  theme(axis.text.x=element_blank()) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.ticks.x=element_blank()) + theme(axis.ticks.y=element_blank()) + theme(axis.text.y=element_blank())  
+
+inset<-ggplot() + geom_tile(data = dplyr::filter(mask_glkd, !is.na(land)),aes(x = x, y = y), fill = "cornsilk2") +
+  geom_point(data=xy,aes(x=x,y=y),col="red",fill="red",size=3,shape=21) + 
+  geom_point(data=fsxy,aes(x=x,y=y),col="black",fill="black",size=3,shape=21) +
+  xlab("") + ylab("") + theme(legend.position = "none",legend.box.background = element_blank(),legend.background = element_blank()) + theme(panel.background = element_rect(fill = "white",colour = "white",size = 1, linetype = "solid")) +
+  theme(axis.text.x=element_blank()) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.ticks.x=element_blank()) + theme(axis.ticks.y=element_blank()) + theme(axis.text.y=element_blank())  
+
+pdf("global_kd.pdf",width=20,height=16)
+plot(map)
+dev.off()
+
+pdf("sample_sites.pdf",width=20,height=16)
+plot(inset)
+dev.off()
 
 
 ##########################################
