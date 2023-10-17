@@ -354,6 +354,8 @@ lakes <- glwd_load(level = 1)
 crs(lakes)<-crs(Cpts)
 global_kd<-mask(global_kd,lakes,inverse=T)
 
+#writeRaster(global_kd,"global_kd.tif")
+
 # Subset watersheds to map only those with average annual discharge greater than 
 # the minimum stream size sampled by CELLDEX
 CELLDEXmin <- min(Cdat$log10dis_m3_pyr)
