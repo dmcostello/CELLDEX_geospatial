@@ -356,25 +356,6 @@ global_kd<-mask(global_kd,lakes,inverse=T)
 
 #writeRaster(global_kd,"global_kd.tif")
 
-# Subset watersheds to map only those with average annual discharge greater than 
-# the minimum stream size sampled by CELLDEX
-CELLDEXmin <- min(Cdat$log10dis_m3_pyr)
-basins_min<-subset(basins,dis_m3_pyr<CELLDEXmin)
-gr2<-fasterize(basins_min,r,field = "ENDO")
-gr2<-gr2*0
-
-# Bring in shapefile boundary of Antarctica and convert to raster
-a<-st_read("geoBoundaries-ATA-ADM0.shp")
-gr3<-fasterize(a,r)
-gr3<-gr3*0
-
-# do inverse mask of ln mean annual stream Kd to add subwatersheds that we did 
-# not predict stream Kd for including Antarctica and set value to the minimum value 
-# of predicted ln stream Kd from our model
-min_predkd <- min(grv2$gl_kd,na.rm=T)
-global_kd<-mask(global_kd, inverse=T,gr2,updatevalue=min_predkd,updateNA=T)
-global_kd<-mask(global_kd, inverse=T,gr3,updatevalue=min_predkd,updateNA=T)
-
 
 ########################################
 #### Load and join leaf litter data ####
@@ -582,8 +563,28 @@ dev.off()
 
 
 ###############################################
-#### Figure 2 - Global raster of cotton kd ####
+#### Figure 2 - Global map of cotton kd #######
 ###############################################
+
+# Subset watersheds to map only those with average annual discharge greater than 
+# the minimum stream size sampled by CELLDEX
+CELLDEXmin <- min(Cdat$log10dis_m3_pyr)
+basins_min<-subset(basins,dis_m3_pyr<CELLDEXmin)
+gr2<-fasterize(basins_min,r,field = "ENDO")
+gr2<-gr2*0
+
+# Bring in shapefile boundary of Antarctica and convert to raster
+# DATA REPOSITORY: https://data.humdata.org/dataset/geoboundaries-admin-boundaries-for-antarctica
+a<-st_read("geoBoundaries-ATA-ADM0.shp")
+gr3<-fasterize(a,r)
+gr3<-gr3*0
+
+# do inverse mask of ln mean annual stream Kd to add subwatersheds that we did 
+# not predict stream Kd for including Antarctica and set value to the minimum value 
+# of predicted ln stream Kd from our model
+min_predkd <- min(grv2$gl_kd,na.rm=T)
+global_kd<-mask(global_kd, inverse=T,gr2,updatevalue=min_predkd,updateNA=T)
+global_kd<-mask(global_kd, inverse=T,gr3,updatevalue=min_predkd,updateNA=T)
 
 # Predicted global kd raster projected in Mollenweide
 glkd_moll<-projectRaster(global_kd,crs="+proj=moll")

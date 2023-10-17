@@ -21,7 +21,7 @@ Raw data files in repository:
 Derived data files in repository:
   * [`litter_processed.csv`](https://github.com/dmcostello/CELLDEX_geospatial/tree/main#litter_processedcsv)
   * [`traits.csv`](https://github.com/dmcostello/CELLDEX_geospatial/tree/main#traitscsv)
-
+  * `global_kd.tif` Raster of global predictions of ln cotton decomposition rates (1/d) 
 
 Code files in repository:
   * [`CELLDEX_geospatial_BRT.R`](https://github.com/dmcostello/CELLDEX_geospatial/tree/main#metadata-for-files-used-in-celldex_geospatial_brtr) 
