@@ -369,7 +369,7 @@ gr3<-gr3*0
 # do inverse mask of ln mean annual stream Kd to add subwatersheds that we did 
 # not predict stream Kd for including Antarctica and set value to the minimum value 
 # of predicted ln stream Kd from our model
-min_predkd <- min(grv2$gl_kd)
+min_predkd <- min(grv2$gl_kd,na.rm=T)
 global_kd<-mask(global_kd, inverse=T,gr2,updatevalue=min_predkd,updateNA=T)
 global_kd<-mask(global_kd, inverse=T,gr3,updatevalue=min_predkd,updateNA=T)
 
@@ -583,7 +583,7 @@ dev.off()
 #### Figure 2 - Global raster of cotton kd ####
 ###############################################
 
-# Project raster in Mollenweide
+# Predicted global kd raster projected in Mollenweide
 glkd_moll<-projectRaster(global_kd,crs="+proj=moll")
 
 # Make dataframe of ln mean stream Kd raster and create column of 0s to represent watersheds with predictions
@@ -595,16 +595,18 @@ mask_glkd$land<-rep(NA,nrow(mask_glkd))
 mask_glkd$land[!is.na(mask_glkd$ln.Mean.Stream.Kd)]<-1
 
 # Bring in point locations where litter decomposition studies were done
+litter_moll<-spTransform(litter_pts,"+proj=moll")
 fsxy<-as.data.frame(coordinates(litter_moll))
 colnames(fsxy)<-c("x","y")
 
 # Transform stream points to Mollweide
-xy<-as.data.frame(coordinates(C_moll))
+Cpts_moll<-spTransform(Cpts,"+proj=moll")
+xy<-as.data.frame(coordinates(Cpts_moll))
 colnames(xy)<-c("x","y")
 
 # Make map figures in ggplot
 map<-ggplot() + borders(fill="lightgray") + geom_raster(data = mask_glkd , aes(x = x, y = y,fill = ln.Mean.Stream.Kd)) + 
-  scale_fill_gradientn(colors=rev(c("lightgray","darkred", "red", "orange", "yellow","darkgreen","darkolivegreen3","darkolivegreen2", "lightgreen","blue","violet","lightgray")),na.value=NA,name=bquote('ln Mean Annual Stream' ~K[d]))+
+  scale_fill_gradientn(colors=rev(c("lightgray","darkred", "red", "orange", "yellow","darkgreen","darkolivegreen3","darkolivegreen2", "lightgreen","blue","violet","lightgray")),na.value=NA,name=bquote('ln Stream' ~K[d]))+
   xlab("") + ylab("") + theme(legend.position = c(0.8, 0.15),legend.box.background = element_blank(),legend.background = element_blank()) + theme(panel.background = element_rect(fill = "white",colour = "white",size = 1, linetype = "solid")) +
   theme(axis.text.x=element_blank()) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   theme(axis.ticks.x=element_blank()) + theme(axis.ticks.y=element_blank()) + theme(axis.text.y=element_blank())  
@@ -640,14 +642,14 @@ cmn<-plot(Fgbm,i.var='C_Litter_Mn',return.grid=TRUE)
 # Get quartiles of the x variable to mark in plots
 kdrug<-as.data.frame(quantile(Fdat$ln_pred_k,probs = seq(0, 1, 0.25),na.rm=T))
 colnames(kdrug)[1]<-"rug"
-c2nrug<-as.data.frame(quantile(Fdat$CtoN_Litter_Mn,probs = seq(0, 1, 0.25),na.rm=T))
-colnames(c2nrug)[1]<-"rug"
-celrug<-as.data.frame(quantile(Fdat$Cellulose_Litter_Mn,probs = seq(0, 1, 0.25),na.rm=T))
-colnames(celrug)[1]<-"rug"
 ligrug<-as.data.frame(quantile(Fdat$Lignin_Litter_Mn,probs=seq(0, 1, 0.25),na.rm=T))
 colnames(ligrug)[1]<-"rug"
+c2nrug<-as.data.frame(quantile(Fdat$CtoN_Litter_Mn,probs = seq(0, 1, 0.25),na.rm=T))
+colnames(c2nrug)[1]<-"rug"
 nmnrug<-as.data.frame(quantile(Fdat$N_Litter_Mn,probs=seq(0, 1, 0.25),na.rm=T))
 colnames(nmnrug)[1]<-"rug"
+celrug<-as.data.frame(quantile(Fdat$Cellulose_Litter_Mn,probs = seq(0, 1, 0.25),na.rm=T))
+colnames(celrug)[1]<-"rug"
 cmnrug<-as.data.frame(quantile(Fdat$C_Litter_Mn,probs=seq(0, 1, 0.25),na.rm=T))
 colnames(cmnrug)[1]<-"rug"
 
