@@ -1,8 +1,8 @@
 Variables,Transform,Description,Source
 logk,none,Response,CELLDEX
 mean_mean_daily_temp,none,Measured water temp,CELLDEX
-NO3c,log,NO3 concentration,McDowell
-DRPc,log,DRP concentration,McDowell
+NO3c,log,NO3 yield,McDowell
+DRPc,log,DRP yield,McDowell
 TPdep,none,TP deposition,Brahney & Mahowald
 TNdep,none,TN deposition,Ackerman
 dis_m3_pyr,log1,Discharge,HydroBASINS
@@ -40,11 +40,11 @@ tempmonth,xten,Air temp month of deployment,HydroBASINS
 pre_mm_syr,none,Precipitation,HydroBASINS
 pre_mm_uyr,none,Precipitation,HydroBASINS
 precipmonth,none,Precip month of deployment,HydroBASINS
-pet_mm_syr,none,Pot ET,HydroBASINS
-pet_mm_uyr,none,Pot ET,HydroBASINS
+pet_mm_syr,none,Potential ET,HydroBASINS
+pet_mm_uyr,none,Potential ET,HydroBASINS
 PETmonth,none,PET month of deployment,HydroBASINS
-aet_mm_syr,none,Act ET,HydroBASINS
-aet_mm_uyr,none,Act ET,HydroBASINS
+aet_mm_syr,none,Actual ET,HydroBASINS
+aet_mm_uyr,none,Actual ET,HydroBASINS
 AETmonth,none,AET month of deployment,HydroBASINS
 ari_ix_sav,xhund,Aridity,HydroBASINS
 ari_ix_uav,xhund,Aridity,HydroBASINS
