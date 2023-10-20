@@ -48,9 +48,10 @@ dates$month <- format(dates$deploy_date,"%m")
 
 #Merge CELLDEX datasets
 mer1 <- merge(CELLDEXkd,strtemp[,c('part.str','mean_mean_daily_temp')],by='part.str')
-mer2 <- merge(mer1,dates[,c('deploy_date','part.str','month')],by='part.str',all.y=F)
-CELLDEX <- merge(mer2,CELLDEXsites[,c('latitude','longitude','part.str')],
+CELLDEX <- merge(mer2,CELLDEXsites[,c('latitude','longitude','part.str',"biome_short")],
                  by='part.str',all.y=F)
+
+#saveRDS(CELLDEX,file="~/Desktop/CELLDEX.rds") For Shiny app
 
 # Turn CELLDEX stream locations and data into a spatial points data frame
 Cpts<-SpatialPointsDataFrame(CELLDEX[,c('longitude','latitude')],CELLDEX,
@@ -62,11 +63,8 @@ Cpts<-SpatialPointsDataFrame(CELLDEX[,c('longitude','latitude')],CELLDEX,
 ######################################################
 
 # Use WorldClim data to set raster extent and resolution
-#clim <- worldclim_global("tmin",res=10,path=tempdir())
-#r <- raster::raster(clim$wc2.1_10m_tmin_12)
-
-r<-raster::raster("wc2.1_10m_tmin_12.tif") # from https://www.worldclim.org/
-
+clim <- worldclim_global("tmin",res=10,path=tempdir())
+r <- raster::raster(clim$wc2.1_10m_tmin_12)
 
 # Bring in stream concentration rasters
 # SOURCE: McDowell et al. (2021) https://doi.org/10.1002/gdj3.111
@@ -368,6 +366,8 @@ global_kd<-mask(global_kd,lakes,inverse=T)
 litter <- read.csv("litter_processed.csv")
 litter$logk <- log(litter$mean_kd)
 
+#saveRDS(litter,file="~/Desktop/litter.rds") #For Shiny app
+
 # Turn litter data into spatial points data frame
 litter_pts<-SpatialPointsDataFrame(litter[,c("longitude","latitude")],litter,
                                proj4string=CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"))
@@ -454,6 +454,9 @@ litter$ln_pred_k<-predict(Cgbm, newdata=Ldat, n.trees=best.iter)
 traits <- read.csv("traits.csv")
 litter2 <- merge(litter,traits,by='Genus')
 
+#trim.traits <- traits[traits$Genus %in% unique(litter2$Genus),]
+#saveRDS(trim.traits,file="~/Desktop/traits.rds") #For Shiny app
+
 length(unique(litter2$Genus)) #33 genera with leaf OR litter traits
 
 # Clean up variables and make factors
@@ -485,6 +488,8 @@ Fsum
 # Calculate pseudo-R2
 print(1-sum((Fdat$logk - predict(Fgbm, newdata=Fdat, n.trees=best.iter2))^2)/
         sum((Fdat$logk - mean(Fdat$logk))^2))
+
+#save(Fgbm,file="~/Desktop/litter_mod.rda") #For Shiny app
 
 
 #######################################
@@ -572,6 +577,10 @@ CELLDEXmin <- min(Cdat$log10dis_m3_pyr)
 basins_min<-subset(basins,dis_m3_pyr<CELLDEXmin)
 gr2<-fasterize(basins_min,r,field = "ENDO")
 gr2<-gr2*0
+
+#global_kd_shiny<-mask(global_kd, inverse=T,gr2,updatevalue=NA,updateNA=F) %>% exp()
+#saveRDS(global_kd_shiny,file="~/Desktop/skd.rds") #For Shiny app
+
 
 # Bring in shapefile boundary of Antarctica and convert to raster
 # DATA REPOSITORY: https://data.humdata.org/dataset/geoboundaries-admin-boundaries-for-antarctica
