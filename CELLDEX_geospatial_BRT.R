@@ -14,6 +14,7 @@ library(glwdr)
 library(parallel)
 library(ggplot2)
 library(cowplot)
+library(leaflet)
 
 set.seed(15)
 
@@ -48,6 +49,7 @@ dates$month <- format(dates$deploy_date,"%m")
 
 #Merge CELLDEX datasets
 mer1 <- merge(CELLDEXkd,strtemp[,c('part.str','mean_mean_daily_temp')],by='part.str')
+mer2 <- merge(mer1,dates[,c('deploy_date','part.str','month')],by='part.str',all.y=F)
 CELLDEX <- merge(mer2,CELLDEXsites[,c('latitude','longitude','part.str',"biome_short")],
                  by='part.str',all.y=F)
 
@@ -715,3 +717,58 @@ pdf(file = "validation_pdps_6_meshsize2.pdf",width=4,height=12)
 grid.arrange(pf1,pf2,pf3,pf4,pf5,pf6, ncol = 1,left=textGrob(bquote('ln' ~K[d]),rot=90))
 dev.off()
 
+######################################
+#### FIGURE S1 - Pine bark beetle ####
+######################################
+
+#SOURCE: Gonzalez-Hernandez et al. 2020 Modelling potential distribution of a pine bark beetle in Mexican 
+#temperate forests using forecast data and spatial analysis tools. https://link.springer.com/article/10.1007/s11676-018-0858-4
+
+#Dataframe with HydroBASINS ID in above study
+pine <- read.csv("pine_hucs.csv")
+pine$beetle <- factor(pine$beetle)
+#1 = moderate to high risk of invasion, 0 = low to no risk of invasion
+names(pine)[2:3] <- c("Long","Lat")
+
+#Map invasion risk
+leaflet(elementId = "map") %>% 
+  addProviderTiles(providers$Esri.WorldTopoMap) %>%
+  addCircleMarkers(data = pine[pine$beetle=="0",], lat =  ~Lat, lng =~Long,
+                   color = "#1b9e77",
+                   radius = 3, stroke = FALSE, fillOpacity = 1) %>%
+  addCircleMarkers(data = pine[pine$beetle=="1",], lat =  ~Lat, lng =~Long,
+                   color = "orangered",
+                   radius = 3, stroke = FALSE, fillOpacity = 1) %>%
+  addLegend("topright",colors = c("#1b9e77","orangered"),
+            labels=c("No-Low","Moderate-High"),opacity=1,title ="Risk of invasion")
+
+#Predict cotton decay
+Mex_cot <- raster::extract(x=global_kd,y=pine_pts[pine_pts$beetle=="1",2:3])
+
+oakdat <- traits[traits$Genus=="Quercus",]
+pinedat <- traits[traits$Genus=="Pinus",]
+
+conddat <- data.frame(Mesh.size="coarse",Leaf.condition="senesced")
+
+oakdat2 <- cbind(oakdat,conddat,ln_pred_k=Mex_cot)
+pinedat2 <- cbind(pinedat,conddat,ln_pred_k=Mex_cot)
+
+Mex_oak<-exp(predict(Fgbm, newdata=oakdat2, n.trees=best.iter2))
+Mex_pine<-exp(predict(Fgbm, newdata=pinedat2, n.trees=best.iter2))
+
+#Calculate empirical density
+den_oak <- density(Mex_oak,na.rm=T)
+den_pine <- density(Mex_pine,na.rm=T)
+
+#Plotting (Or use color goldenrod2)
+
+with(den_oak,plot(x,y,type="l",lwd=4,col="orangered",lty=3,xlim=c(0,0.02),
+                  las=1,ylim=c(0,500),yaxt="n",
+                  ylab="",xlab="Decomp. rate (1/d)",cex.lab=1.5))
+mtext("Relative frequency",side=2,line=1,cex=1.5)
+with(den_pine,lines(x,y,lwd=4,col="forestgreen"))
+legend("topright",cex=1.2,
+       legend=c(substitute(paste(italic("Pinus"))),
+                substitute(paste(italic("Quercus")))),
+       lwd=4,lty=c(1,3),
+       col=c("forestgreen","orangered"),text.col = c("forestgreen","orangered"))
