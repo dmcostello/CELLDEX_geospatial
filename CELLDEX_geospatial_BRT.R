@@ -564,7 +564,8 @@ ps6<-ggplot(data = mntmp, aes(tmp_dc_smn, y)) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
 
 # Make trellis of the top 6 partial dependence plots
-pdf(file = "stream_pdps_6.pdf",width=4,height=10)
+#pdf(file = "stream_pdps_6.pdf",width=4,height=10)
+tiff(file="stream_pdps_6.tiff",width=4,height=10,units="in",res=300)
 grid.arrange(ps1,ps2,ps3,ps4,ps5,ps6, ncol = 1,left=textGrob(bquote('ln' ~K[d]),rot=90))
 dev.off()
 
@@ -626,17 +627,19 @@ map<-ggplot() + borders(fill="lightgray") + geom_raster(data = mask_glkd , aes(x
   theme(axis.ticks.x=element_blank()) + theme(axis.ticks.y=element_blank()) + theme(axis.text.y=element_blank())  
 
 inset<-ggplot() + geom_tile(data = dplyr::filter(mask_glkd, !is.na(land)),aes(x = x, y = y), fill = "cornsilk2") +
-  geom_point(data=xy,aes(x=x,y=y),col="red",fill="red",size=3,shape=21) + 
-  geom_point(data=fsxy,aes(x=x,y=y),col="black",fill="black",size=3,shape=21) +
+  geom_point(data=xy,aes(x=x,y=y),col="red",fill="red",size=1,shape=21) + 
+  geom_point(data=fsxy,aes(x=x,y=y),col="black",fill="black",size=1,shape=21) +
   xlab("") + ylab("") + theme(legend.position = "none",legend.box.background = element_blank(),legend.background = element_blank()) + theme(panel.background = element_rect(fill = "white",colour = "white",size = 1, linetype = "solid")) +
   theme(axis.text.x=element_blank()) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   theme(axis.ticks.x=element_blank()) + theme(axis.ticks.y=element_blank()) + theme(axis.text.y=element_blank())  
 
-pdf("global_kd.pdf",width=20,height=16)
+#pdf("global_kd.pdf",width=20,height=16)
+tiff(file="global_kd.tiff",width=10,height=8,units="in",res=300)
 plot(map)
 dev.off()
 
-pdf("sample_sites.pdf",width=20,height=16)
+#pdf("sample_sites.pdf",width=20,height=16)
+tiff(file="sample_sites.tiff",width=5,height=4,units="in",res=300)
 plot(inset)
 dev.off()
 
@@ -673,10 +676,12 @@ pf1<-ggplot(data = lnpredk, aes(ln_pred_k, y)) +
   geom_smooth(aes(color=Mesh.size),method="gam",se=T) +
   geom_line(aes(color=Mesh.size),linetype=1,alpha=0.25,linewidth=0.25) +
   geom_point(aes(x=rug,y=min(lnpredk$y)),kdrug,color="gray",shape = 15) +
-  scale_color_manual(values=cols) +
-  ylab("") + xlab(bquote('ln Predicted' ~K[d])) + theme(legend.position=c(0.25,0.95)) + theme(legend.title = element_blank()) +
+  scale_color_manual(values=cols, labels=c("Detritivore+Microbe","Microbe")) +
+  ylab("") + xlab(bquote('ln Predicted' ~K[d])) + 
+  theme(legend.position=c(0.3,0.85)) + theme(legend.title = element_blank()) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black")) +
-  guides(linetype = guide_legend(ncol = 1)) + guides(color=guide_legend(ncol=2))
+  guides(linetype = guide_legend(ncol = 1)) + guides(color=guide_legend(ncol=1))+
+  theme(legend.background=element_rect(fill="transparent"))
 
 pf2<-ggplot(data = lig, aes(Lignin_Litter_Mn, y)) +
   geom_point(aes(x=rug,y=min(lig$y)),ligrug,color="gray",shape = 15) +
@@ -713,7 +718,8 @@ pf6<-ggplot(data = cmn, aes(C_Litter_Mn, y)) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
 
 # Make trellis of the top 6 partial dependence plots
-pdf(file = "validation_pdps_6_meshsize2.pdf",width=4,height=12)
+#pdf(file = "validation_pdps_6_meshsize2.pdf",width=4,height=12)
+tiff(file="validation_pdps_6.tiff",width=4,height=12,units="in",res=300)
 grid.arrange(pf1,pf2,pf3,pf4,pf5,pf6, ncol = 1,left=textGrob(bquote('ln' ~K[d]),rot=90))
 dev.off()
 
