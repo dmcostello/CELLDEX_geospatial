@@ -501,72 +501,133 @@ print(1-sum((Fdat$logk - predict(Fgbm, newdata=Fdat, n.trees=best.iter2))^2)/
 # Get grids of x variable values and predictions to make partial dependence plots
 meantemp<-plot(Cgbm,i.var='mean_mean_daily_temp',return.grid=TRUE)
 drp<-plot(Cgbm,i.var='log10DRPc',return.grid=TRUE)
+drp$DRPc <- 10^(drp$log10DRPc)
 pet<-plot(Cgbm,i.var='pet_mm_uyr',return.grid=TRUE)
 limn<-plot(Cgbm,i.var='log10lka_pc_sse',return.grid=TRUE)
 no3<-plot(Cgbm,i.var='log10NO3c',return.grid=TRUE)
+no3$NO3c <- 10^(no3$log10NO3c)
 mntmp<-plot(Cgbm,i.var='tmp_dc_smn',return.grid=TRUE)
 
-# Get quartiles of the x variable to mark in plots
-mtrug<-as.data.frame(quantile(Cdat$mean_mean_daily_temp),probs = seq(0, 1, 0.25))
-colnames(mtrug)[1]<-"rug"
-drprug<-as.data.frame(quantile(Cdat$log10DRPc,probs = seq(0, 1, 0.25),na.rm=T))
-colnames(drprug)[1]<-"rug"
-petrug<-as.data.frame(quantile(Cdat$pet_mm_uyr),probs = seq(0, 1, 0.25))
-colnames(petrug)[1]<-"rug"
-limnrug<-as.data.frame(quantile(Cdat$log10lka_pc_sse,probs=seq(0, 1, 0.25)))
-colnames(limnrug)[1]<-"rug"
-limnrug[2,1]<-0.01
-no3rug<-as.data.frame(quantile(Cdat$log10NO3c,probs=seq(0, 1, 0.25),na.rm=T))
-colnames(no3rug)[1]<-"rug"
-mntrug<-as.data.frame(quantile(Cdat$tmp_dc_smn,probs=seq(0, 1, 0.25),na.rm=T))
-colnames(mntrug)[1]<-"rug"
+# Get quantiles of the x variable for rug plots
+qs <- seq(0,1,0.1)
+mtrug<-data.frame(rug=quantile(Cdat$mean_mean_daily_temp,probs=qs))
+drprug<-data.frame(rug=quantile(Cdat$log10DRPc,probs = qs,na.rm=T))
+petrug<-data.frame(rug=quantile(Cdat$pet_mm_uyr,probs = qs))
+limnrug<-data.frame(rug=quantile(Cdat$log10lka_pc_sse,probs=qs))
+no3rug<-data.frame(rug=quantile(Cdat$log10NO3c,probs=qs,na.rm=T))
+mntrug<-data.frame(rug=quantile(Cdat$tmp_dc_smn,probs=qs,na.rm=T))
+
+#Background maps
+DRP_moll<-projectRaster(DRPres,crs="+proj=moll")
+DRPm <- as.data.frame(DRP_moll,xy=TRUE)
+NO3_moll<-projectRaster(NO3res,crs="+proj=moll")
+NO3m <- as.data.frame(NO3_moll,xy=TRUE)
+
+
+#Mollenweide boundaries
+mapx <- c(-1.2e7,1.5e7)
+mapy <- c(-7.5e6,8.7e6)
+
+#DRP MAP
+png(file="DRPmap.png",width=4,height=3,units="in",res=300,bg="transparent")
+ggplot() + geom_raster(data = DRPm , aes(x = x, y = y,fill = log10(DRP_Conc)))+
+  ylim(mapy) + xlim(mapx) +
+  scale_fill_gradientn(na.value = NA,colours = terrain.colors(4),
+                       limits=c(min(Cdat$log10DRPc,na.rm=T),max(Cdat$log10DRPc,na.rm=T))) +
+  theme(legend.position = c(0.5,-0.05),legend.direction = "horizontal",
+        legend.key.width = unit(0.2,units="npc"),legend.key.height = unit(0.06,units="npc"),
+        legend.background =element_blank(),legend.title = element_blank(),legend.box.just = "bottom")+
+  xlab("") + ylab("") + theme(axis.text = element_blank(),
+                              axis.ticks = element_blank(),
+                              axis.title = element_blank(),
+                              panel.background = element_blank())
+dev.off()
+
+#NO3+NO2 MAP
+png(file="NO3map.png",width=4,height=3,units="in",res=300,bg="transparent")
+ggplot() + geom_raster(data = NO3m , aes(x = x, y = y,fill = log10(Band_1)))+
+  ylim(mapy) + xlim(mapx) +
+  scale_fill_gradientn(na.value = NA,colours = terrain.colors(4),
+                       limits=c(min(Cdat$log10NO3c,na.rm=T),max(Cdat$log10NO3c,na.rm=T))) +
+  theme(legend.position = c(0.5,-0.05),legend.direction = "horizontal",
+        legend.key.width = unit(0.2,units="npc"),legend.key.height = unit(0.06,units="npc"),
+        legend.background =element_blank(),legend.title = element_blank(),legend.box.just = "bottom")+
+  xlab("") + ylab("") + theme(axis.text = element_blank(),
+                              axis.ticks = element_blank(),
+                              axis.title = element_blank(),
+                              panel.background = element_blank())
+dev.off()
+
+#Load map images
+DRPmap2 <- readPNG("DRPmap.png")
+NO3map2 <- readPNG("NO3map.png")
 
 # Make partial dependence plots in ggplot
 ps1<-ggplot(data = meantemp, aes(mean_mean_daily_temp, y)) +
-  geom_point(aes(x=rug,y=min(meantemp$y)),mtrug,color="gray",shape = 15) +
+  geom_rug(aes(x=rug,y=min(meantemp$y)),data=mtrug,col="grey",sides="b",length=unit(0.07,"npc")) +
   geom_line(color = "steelblue", size = 1) +
-  ylab("") + 
-  xlab(expression(x="Mean daily stream temp during deployment "*degree*C)) +
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
+  ylab("") + ylim(c(-4.6,-3.9)) +
+  xlab(expression(x="Mean daily stream temp during deployment ("*degree*"C)")) +
+  theme(panel.background = element_rect(fill = "transparent", colour = NA),  
+        plot.background = element_rect(fill = "transparent", colour = NA),
+        axis.line = element_line(colour = "black"),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 
-ps2<-ggplot(data = drp, aes(log10DRPc, y)) +
-  geom_point(aes(x=rug,y=min(drp$y)),drprug,color="gray",shape = 15) +
+
+
+ps2 <- ggplot(data = drp, aes(log10DRPc, y)) +
+  ggpubr::background_image(DRPmap2)+
+  geom_rug(aes(x=rug,y=min(meantemp$y)),data=drprug,col="grey",sides="b",length=unit(0.07,"npc")) +
   geom_line(color = "steelblue", size = 1) +
-  ylab("") + 
-  xlab(expression(~log[10]~"Stream dissolved reactive P kg ha"^"-1"~"yr"^"-1")) +
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
+  ylab("") +
+  xlab(expression("Stream DRP yield (kg ha"^"-1"~"yr"^"-1"*")")) +
+  theme(axis.line = element_line(colour = "black"),
+        axis.text.x = element_text(vjust = -2),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank())+
+  annotation_logticks(sides = "b",outside = T) +
+  coord_cartesian(clip = "off",ylim=c(-4.6,-3.9), xlim=c(-3,-0.3)) + 
+  scale_x_continuous(breaks=seq(-3,0,1),labels=c(0.001,0.01,0.1,1))
+
 
 ps3<-ggplot(data = pet, aes(pet_mm_uyr, y)) +
-  geom_point(aes(x=rug,y=min(pet$y)),petrug,color="gray",shape = 15) +
+  geom_rug(aes(x=rug,y=min(meantemp$y)),data=petrug,col="grey",sides="b",length=unit(0.07,"npc")) +
   geom_line(color = "steelblue", size = 1) +
-  ylab("") + 
-  labs(x=bquote('Upstream mean PET mm yr'^'-1')) +
+  ylab("") + ylim(c(-4.6,-3.9)) +
+  labs(x=bquote('Upstream mean PET (mm yr'^'-1'*")")) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
 
 ps4<-ggplot(data = limn, aes(log10lka_pc_sse, y)) +
-  geom_point(aes(x=rug,y=min(limn$y)),limnrug,color="gray",shape = 15) +
+  geom_rug(aes(x=rug,y=min(meantemp$y)),data=limnrug,col="grey",sides="b",length=unit(0.07,"npc")) +
   geom_line(color = "steelblue", size = 1) +
-  ylab("") + labs(x=~log[10]~"Subwatershed lake area %") +
+  ylab("") + labs(x=~log[10]~"Subwatershed lake area (%)") + ylim(c(-4.6,-3.9)) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
 
 ps5<-ggplot(data = no3, aes(log10NO3c, y)) +
-  geom_point(aes(x=rug,y=min(no3$y)),no3rug,color="gray",shape = 15) +
+  ggpubr::background_image(NO3map2)+
+  geom_rug(aes(x=rug,y=min(meantemp$y)),data=no3rug,col="grey",sides="b",length=unit(0.07,"npc")) +
   geom_line(color = "steelblue", size = 1) +
-  ylab("") + 
-  xlab(expression(~log[10]~"Stream NO"["2"]~"- NO"["3"]~"kg ha"^"-1"~"yr"^"-1")) +
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
+  ylab("") +
+  xlab(expression("Stream NO"[3]*"+NO"[2]~"yield (kg ha"^"-1"~"yr"^"-1"*")")) +
+  theme(axis.line = element_line(colour = "black"),
+        axis.text.x = element_text(vjust = -2),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank())+
+  annotation_logticks(sides = "b",outside = T) +
+  coord_cartesian(clip = "off",ylim=c(-4.6,-3.9), xlim=c(-2,1.2)) + 
+  scale_x_continuous(breaks=seq(-2,1,1),labels=c(0.01,0.1,1,10))
 
 ps6<-ggplot(data = mntmp, aes(tmp_dc_smn, y)) +
-  geom_point(aes(x=rug,y=min(mntmp$y)),mntrug,color="gray",shape = 15) +
+  geom_rug(aes(x=rug,y=min(meantemp$y)),data=mntrug,col="grey",sides="b",length=unit(0.07,"npc")) +
   geom_line(color = "steelblue", size = 1) +
-  ylab("") + 
-  xlab(expression("Subwatershed minimum temperature "*degree*C)) +
+  ylab("") + ylim(c(-4.6,-3.9)) +
+  xlab(expression("Subwatershed minimum temperature ("*degree*"C)")) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
 
 # Make trellis of the top 6 partial dependence plots
 #pdf(file = "stream_pdps_6.pdf",width=4,height=10)
-tiff(file="stream_pdps_6.tiff",width=4,height=10,units="in",res=300)
-grid.arrange(ps1,ps2,ps3,ps4,ps5,ps6, ncol = 1,left=textGrob(bquote('ln' ~K[d]),rot=90))
+tiff(file="stream_pdps_6.tiff",width=4,height=12,units="in",res=300)
+grid.arrange(ps1,ps2,ps3,ps4,ps5,ps6, ncol = 1,left=textGrob(bquote('ln' ~K[d]~"(d"^-1*")"),rot=90))
 dev.off()
 
 
