@@ -15,8 +15,8 @@ inu_pc_smx,log1,Inundation extent,HydroBASINS
 inu_pc_umx,log1,Inundation extent,HydroBASINS
 inu_pc_slt,log1,Inundation extent,HydroBASINS
 inu_pc_ult,log1,Inundation extent,HydroBASINS
-lka_pc_sse,log1,Lake area,HydroBASINS
-lka_pc_use,log1,Lake area,HydroBASINS
+lka_pc_sse,log1xten,Lake area,HydroBASINS
+lka_pc_use,log1xten,Lake area,HydroBASINS
 lkv_mc_usu,log1,Lake volume,HydroBASINS
 rev_mc_usu,log1,Reservoir volume,HydroBASINS
 dor_pc_pva,log1,Regulation,HydroBASINS
