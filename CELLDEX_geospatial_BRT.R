@@ -479,7 +479,7 @@ litter2 <- merge(litter,traits,by='Genus')
 #trim.traits <- traits[traits$Genus %in% unique(litter2$Genus),]
 #saveRDS(trim.traits,file="~/Desktop/traits.rds") #For Shiny app
 
-length(unique(litter2$Genus)) #33 genera with leaf OR litter traits
+length(unique(litter2$Genus)) #35 genera with leaf OR litter traits
 
 # Clean up variables and make factors
 litter2$Mesh.size<-factor(litter2$Mesh.size)
@@ -507,7 +507,7 @@ Fgbm<- gbm(logk~.,
 Fsum<-summary(Fgbm,n.trees=best.iter2,method=permutation.test.gbm) 
 Fsum
 
-#plot(Fgbm,i.var='Leaf.condition')
+#plot(Fgbm,i.var='N_Litter_Mn')
 
 # Calculate pseudo-R2
 print(1-sum((Fdat$logk - predict(Fgbm, newdata=Fdat, n.trees=best.iter2))^2)/
@@ -851,12 +851,14 @@ dev.off()
 lnpredk<-plot(Fgbm,i.var=c('ln_pred_k','Mesh.size'),return.grid=TRUE)
 lig<-plot(Fgbm,i.var='Lignin_Litter_Mn',return.grid=TRUE)
 c2n<-plot(Fgbm,i.var='CtoN_Litter_Mn',return.grid=TRUE)
+nlit <- plot(Fgbm,i.var='N_Litter_Mn',return.grid=TRUE)
 
 # Get deciles of the x variable for rug plots
 qs <- seq(0,1,0.1)
 kdrug<-data.frame(rug=quantile(Fdat$ln_pred_k,probs=qs,na.rm=T))
 c2nrug<-data.frame(rug=quantile(Fdat$CtoN_Litter_Mn,probs=qs,na.rm=T))
 ligrug<-data.frame(rug=quantile(Fdat$Lignin_Litter_Mn,probs=qs,na.rm=T))
+nlitrug<-data.frame(rug=quantile(Fdat$N_Litter_Mn,probs=qs,na.rm=T))
 
 # Make partial dependence plots in ggplot
 cols<-c("brown","forestgreen")
@@ -900,10 +902,21 @@ pf3<-ggplot(data = c2n, aes(CtoN_Litter_Mn, y)) +
         axis.line = element_line(colour = "black"),
         panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 
+pf4<-ggplot(data = nlit, aes(N_Litter_Mn, y)) +
+  geom_rug(aes(x=rug,y=min(meantemp$y)),data=nlitrug,col="grey",sides="b",length=unit(0.07,"npc")) +
+  geom_line(color = "steelblue", size = 1) +
+  ylab("") + ylim(c(-4.8,-4)) +
+  xlab("Litter N (% dm)") +
+  annotate("text", x = max(nlit$N_Litter_Mn), y=-4.1, label = "D",size=6) +
+  theme(panel.background = element_rect(fill = "transparent", colour = NA),  
+        plot.background = element_rect(fill = "transparent", colour = NA),
+        axis.line = element_line(colour = "black"),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
 # Make trellis of the top 3 partial dependence plots
-#pdf(file = "validation_pdps_3.pdf",width=4,height=6)
-tiff(file="validation_pdps_3.tiff",width=4,height=6,units="in",res=300)
-grid.arrange(pf1,pf2,pf3, ncol = 1,left=textGrob(bquote('ln' ~K[d]~"(d"^-1*")"),rot=90))
+#pdf(file = "validation_pdps_3.pdf",width=4,height=8)
+tiff(file="validation_pdps_3.tiff",width=4,height=8,units="in",res=300)
+grid.arrange(pf1,pf2,pf3,pf4, ncol = 1,left=textGrob(bquote('ln' ~K[d]~"(d"^-1*")"),rot=90))
 dev.off()
 
 ######################################

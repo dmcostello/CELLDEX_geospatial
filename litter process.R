@@ -14,7 +14,7 @@ leaf2 <- merge(leaf1,leaf_cond,by='Sorting.code')
 leaf2[leaf2$Leaf.condition=="green ","Leaf.condition"] <- "green"
 
 # Simplify to just needed columns
-litter_var <- c('Longitude.2','Latitude.2',
+litter_var <- c('Long_DD','Lat_DD',
                 'Leaf.condition','mesh.size.category',
                 'Genus','k..d.','mean..ºC.','Citation','Sorting.code')
 
@@ -39,7 +39,7 @@ leaf6 <- leaf5 %>% group_by(Mesh.size,Leaf.condition,Genus,latitude,longitude) %
   summarise(mean_kd=mean(kd),Sorting.code=min(Sorting.code),mean_mean_daily_temp=mean(mean_temp,na.rm=T),.groups = 'drop') %>%
   as.data.frame()
 
-dim(leaf6) #973 measurements of kd
+dim(leaf6) #1005 measurements of kd
 
 # Merge back citations
 leaf7 <- merge(leaf6,leaf5[,c("Sorting.code","Citation")],by='Sorting.code')
@@ -48,10 +48,10 @@ leaf7 <- merge(leaf6,leaf5[,c("Sorting.code","Citation")],by='Sorting.code')
 gen_tab <- as.data.frame(table(leaf7$Genus))
 dim(gen_tab) #105 total genera
 gen_tab3 <- gen_tab[gen_tab$Freq>3,] #Only genera with n > 3
-dim(gen_tab3) #33 genera
+dim(gen_tab3) #35 genera
 
 leaf8 <- leaf7[leaf7$Genus %in% gen_tab3$Var1,] 
-dim(leaf8) #861 measurements
+dim(leaf8) #895 measurements
 
 # Write the final cleaned file for BRT analysis
 #write.csv(leaf8,"litter_processed.csv",row.names = F)
