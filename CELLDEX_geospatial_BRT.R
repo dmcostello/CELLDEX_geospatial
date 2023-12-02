@@ -381,7 +381,8 @@ global_kd<-mask(global_kd,lakes,inverse=T)
 litter <- read.csv("litter_processed.csv")
 litter$logk <- log(litter$mean_kd)
 
-length(unique(litter$logk)) #551 unique locations with predicted kd
+length(unique(litter$logk)) #559 unique locations with predicted kd
+sum(is.na(litter$mean_mean_daily_temp)) #7 values of kd without temperature
 
 #saveRDS(litter,file="~/Desktop/litter.rds") #For Shiny app
 
