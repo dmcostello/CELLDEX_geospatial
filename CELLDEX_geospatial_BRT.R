@@ -363,7 +363,7 @@ values<-grv2$gl_kd
 global_kd <- setValues(gr,values)
 
 # Load large lakes from glwdr to mask out lake pixels
-lakes <- <-st_read("glwd_1.shp")
+lakes <- st_read("glwd_1.shp")
 global_kd<-mask(global_kd,lakes,inverse=T)
 
 #writeRaster(global_kd,"global_kd.tif")
