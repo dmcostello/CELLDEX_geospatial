@@ -533,6 +533,7 @@ qs <- seq(0,1,0.1)
 mtrug<-data.frame(rug=quantile(Cdat$mean_mean_daily_temp,probs=qs,na.rm=T))
 limnrug<-data.frame(rug=quantile(Cdat$log10lka_pc_sse,probs=qs))
 no3rug<-data.frame(rug=quantile(Cdat$log10NO3c,probs=qs,na.rm=T))
+no3rug$rug[1] <- quantile(Cdat$log10NO3c,probs=0.01,na.rm=T) #Replace min with 1% quantile to exclude outlier
 drprug<-data.frame(rug=quantile(Cdat$log10DRPc,probs = qs,na.rm=T))
 aetrug<-data.frame(rug=quantile(Cdat$AETmonth,probs = qs))
 mtyrug<-data.frame(rug=quantile(Cdat$tmp_dc_uyr,probs=qs,na.rm=T))
@@ -546,93 +547,107 @@ AETmap <- readPNG("AETmap.png")
 mtymap <- readPNG("mtymap.png")
 
 # Make partial dependence plots in ggplot
-ps1 <- ggplot(data = meantemp, aes(mean_mean_daily_temp, y)) +
+ps1 <- ggplot(data = meantemp, aes(mean_mean_daily_temp, exp(y))) +
   ggpubr::background_image(streamtempmap)+
-  geom_rug(aes(x=rug,y=min(meantemp$y)),data=mtrug,col="grey",sides="b",length=unit(0.07,"npc")) +
   geom_line(color = "steelblue", size = 1) +
-  ylab("") + ylim(c(-4.8,-3.5)) + 
-  annotate("text", x = min(meantemp$mean_mean_daily_temp), y=-3.5, label = "A",size=6) +
+  ylab("") + ylim(c(0.007,0.027)) + xlim(c(0,31))+
+  annotate("text", x = min(meantemp$mean_mean_daily_temp), y=0.026, label = "A",fontface="bold") +
   xlab(expression(x="Mean daily stream temp during deployment ("*degree*"C)")) +
+  geom_rug(aes(x=rug,y=0),data=mtrug,col="black",sides="b",length=unit(0.07,"npc")) +
   theme(panel.background = element_rect(fill = "transparent", colour = NA),  
         plot.background = element_rect(fill = "transparent", colour = NA),
         axis.line = element_line(colour = "black"),
-        panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+        axis.title.x = element_text(vjust=-0.5),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        axis.title = element_text(size = 9),axis.text=element_text(size=9))
 
-ps2 <- ggplot(data = limn, aes(log10lka_pc_sse, y)) +
+ps2 <- ggplot(data = limn, aes(log10lka_pc_sse, exp(y))) +
   ggpubr::background_image(limnmap)+
-  geom_rug(aes(x=rug,y=min(meantemp$y)),data=limnrug,col="grey",sides="b",length=unit(0.07,"npc")) +
   geom_line(color = "steelblue", size = 1) +
   ylab("") +
-  annotate("text", x = min(limn$log10lka_pc_sse), y=-3.5, label = "B",size=6) +
+  annotate("text", x = min(limn$log10lka_pc_sse), y=0.026, label = "B",fontface="bold") +
   xlab("Subwatershed lake area (%)") +
+  geom_rug(aes(x=rug,y=0),data=limnrug,col="black",position="jitter",sides="b",length=unit(0.07,"npc")) +
   theme(axis.line = element_line(colour = "black"),
+        axis.title = element_text(size = 9),axis.text=element_text(size=9),
         axis.text.x = element_text(vjust = -2),
+        axis.title.x = element_text(vjust=-0.5),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())+
   annotation_logticks(sides = "b",outside = T) +
-  coord_cartesian(clip = "off",ylim=c(-4.8,-3.5), xlim=c(0,2)) + 
+  coord_cartesian(clip = "off",ylim=c(0.007,0.027), xlim=c(0,2)) + 
   scale_x_continuous(breaks=seq(0,2,1),labels=c(1,10,100))
 
-ps3 <- ggplot(data = no3[no3$log10NO3c>-2,], aes(log10NO3c, y)) +
+ps3 <- ggplot(data = no3[no3$log10NO3c>-2,], aes(log10NO3c, exp(y))) +
   ggpubr::background_image(NO3map)+
-  geom_rug(aes(x=rug,y=min(meantemp$y)),data=no3rug,col="grey",sides="b",length=unit(0.07,"npc")) +
   geom_line(color = "steelblue", size = 1) +
   ylab("") +
-  annotate("text", x = -2, y=-3.5, label = "C",size=6) +
+  annotate("text", x = -2, y=0.026, label = "C",fontface="bold") +
   xlab(expression("Stream NO"[3]*"+NO"[2]~"yield (kg ha"^"-1"~"yr"^"-1"*")")) +
+  geom_rug(aes(x=rug,y=0),data=no3rug,col="black",sides="b",length=unit(0.07,"npc")) +
   theme(axis.line = element_line(colour = "black"),
+        axis.title = element_text(size = 9),axis.text=element_text(size=9),
         axis.text.x = element_text(vjust = -2),
+        axis.title.x = element_text(vjust=-0.5),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())+
   annotation_logticks(sides = "b",outside = T) +
-  coord_cartesian(clip = "off",ylim=c(-4.8,-3.5), xlim=c(-2,1.2)) + 
+  coord_cartesian(clip = "off",ylim=c(0.007,0.027), xlim=c(-2,1.2)) + 
   scale_x_continuous(breaks=seq(-2,1,1),labels=c(0.01,0.1,1,10))
 
-ps4 <- ggplot(data = drp, aes(log10DRPc, y)) +
+ps4 <- ggplot(data = drp, aes(log10DRPc, exp(y))) +
   ggpubr::background_image(DRPmap)+
-  geom_rug(aes(x=rug,y=min(meantemp$y)),data=drprug,col="grey",sides="b",length=unit(0.07,"npc")) +
   geom_line(color = "steelblue", size = 1) +
   ylab("") +
-  annotate("text", x = min(drp$log10DRPc), y=-3.5, label = "D",size=6) +
+  annotate("text", x = min(drp$log10DRPc), y=0.026, label = "D",fontface="bold") +
   xlab(expression("Stream DRP yield (kg ha"^"-1"~"yr"^"-1"*")")) +
+  geom_rug(aes(x=rug,y=0),data=drprug,col="black",sides="b",length=unit(0.07,"npc")) +
   theme(axis.line = element_line(colour = "black"),
+        axis.title = element_text(size = 9),axis.text=element_text(size=9),
         axis.text.x = element_text(vjust = -2),
+        axis.title.x = element_text(vjust=-0.5),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())+
   annotation_logticks(sides = "b",outside = T) +
-  coord_cartesian(clip = "off",ylim=c(-4.8,-3.5), xlim=c(-3,-0.3)) + 
+  coord_cartesian(clip = "off",ylim=c(0.007,0.027), xlim=c(-3,-0.3)) + 
   scale_x_continuous(breaks=seq(-3,0,1),labels=c(0.001,0.01,0.1,1))
 
 
-ps5 <- ggplot(data = aet, aes(AETmonth, y)) +
+ps5 <- ggplot(data = aet, aes(AETmonth, exp(y))) +
   ggpubr::background_image(AETmap)+
-  geom_rug(aes(x=rug,y=min(meantemp$y)),data=aetrug,col="grey",sides="b",length=unit(0.07,"npc")) +
   geom_line(color = "steelblue", size = 1) +
-  ylab("") + ylim(c(-4.8,-3.5)) +
-  annotate("text", x = min(aet$AETmonth), y=-3.5, label = "E",size=6) +
+  ylab("") + ylim(c(0.007,0.027)) + xlim(c(3,150)) +
+  annotate("text", x = min(aet$AETmonth), y=0.026, label = "E",fontface="bold") +
   xlab(expression(x="AET during month of deployment (mm)")) +
+  geom_rug(aes(x=rug,y=0),data=aetrug,col="black",sides="b",length=unit(0.07,"npc")) +
   theme(panel.background = element_rect(fill = "transparent", colour = NA),  
         plot.background = element_rect(fill = "transparent", colour = NA),
         axis.line = element_line(colour = "black"),
-        panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+        axis.title.x = element_text(vjust=-0.5),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        axis.title = element_text(size = 9),axis.text=element_text(size=9))
 
 
-ps6<-ggplot(data = mty, aes(tmp_dc_uyr, y)) +
+ps6<-ggplot(data = mty, aes(tmp_dc_uyr, exp(y))) +
   ggpubr::background_image(mtymap)+
-  geom_rug(aes(x=rug,y=min(meantemp$y)),data=mtyrug,col="grey",sides="b",length=unit(0.07,"npc")) +
-  geom_line(color = "steelblue", size = 1) +
-  ylab("") + ylim(c(-4.8,-3.5)) +
-  annotate("text", x = min(mty$tmp_dc_uyr), y=-3.5, label = "F",size=6) +
+   geom_line(color = "steelblue", size = 1) +
+  ylab("") + ylim(c(0.007,0.027)) + xlim(c(-12,28))+
+  annotate("text", x = min(mty$tmp_dc_uyr), y=0.026, label = "F",fontface="bold") +
   xlab(expression(x="Mean annual air temperature ("*degree*"C)")) +
+  geom_rug(aes(x=rug,y=0),data=mtyrug,col="black",sides="b",length=unit(0.07,"npc")) +
   theme(panel.background = element_rect(fill = "transparent", colour = NA),  
         plot.background = element_rect(fill = "transparent", colour = NA),
         axis.line = element_line(colour = "black"),
-        panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+        axis.title.x = element_text(vjust=-0.5),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        axis.title = element_text(size = 9),axis.text=element_text(size=9))
 
 # Make trellis of the top 6 partial dependence plots
-#pdf(file = "stream_pdps_6.pdf",width=8,height=8)
-tiff(file="stream_pdps_6.tiff",width=8,height=8,units="in",res=300)
-grid.arrange(ps1,ps2,ps3,ps4,ps5,ps6, ncol = 2,left=textGrob(bquote('ln' ~K[d]~"(d"^-1*")"),rot=90))
+pdf(file = "stream_pdps_6rev.pdf",width=7.25,height=7)
+#tiff(file="stream_pdps_6rev.tiff",width=8,height=8,units="in",res=300)
+grid.arrange(ps1,ps2,ps3,ps4,ps5,ps6, ncol = 2,
+             left=textGrob(bquote('Cellulose decomposition rate (K'[d]~" d"^-1*")"),
+                           rot=90,gp = gpar(fontsize = 9)))
 dev.off()
 
 
