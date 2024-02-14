@@ -566,7 +566,7 @@ ps2 <- ggplot(data = limn, aes(log10lka_pc_sse, exp(y))) +
   geom_line(color = "steelblue", size = 1) +
   ylab("") +
   annotate("text", x = min(limn$log10lka_pc_sse), y=0.026, label = "B",fontface="bold") +
-  xlab("Subwatershed lake area (%)") +
+  xlab("Subwatershed lake area+1 (%)") +
   geom_rug(aes(x=rug,y=0),data=limnrug,col="black",position="jitter",sides="b",length=unit(0.07,"npc")) +
   theme(axis.line = element_line(colour = "black"),
         axis.title = element_text(size = 9),axis.text=element_text(size=9),
@@ -702,8 +702,13 @@ colnames(xy)<-c("x","y","temp")
 
 # Make map figures in ggplot
 map<-ggplot() + borders(fill="lightgray") + geom_raster(data = mask_glkd , aes(x = x, y = y,fill = ln.Mean.Stream.Kd)) + 
-  scale_fill_gradientn(colors=rev(c("lightgray","darkred", "red", "orange", "yellow","darkgreen","darkolivegreen3","darkolivegreen2", "lightgreen","blue","violet","lightgray")),na.value=NA,name=bquote('ln Stream' ~K[d]))+
-  xlab("") + ylab("") + theme(legend.position = c(0.15, 0.75),legend.box.background = element_blank(),legend.background = element_blank()) + theme(panel.background = element_rect(fill = "white",colour = "white",size = 1, linetype = "solid")) +
+  scale_fill_gradientn(colors=rev(c("lightgray","darkred", "red", "orange", "yellow","darkgreen","darkolivegreen3","darkolivegreen2", "lightgreen","blue","violet","lightgray")),
+                       na.value=NA,name=bquote('Stream' ~K[d]),
+                       labels=c(0.005,0.01,0.02,0.03,0.05,0.08),
+                       breaks=log(c(0.005,0.01,0.02,0.03,0.05,0.08)),limits=c(log(0.003),log(0.1)))+
+  xlab("") + ylab("") + theme(legend.position = c(0.1, 0.75),legend.box.background = element_blank(),
+                              legend.background = element_blank()) + theme(panel.background = element_rect(fill = "white",colour = "white",
+                                                                                                           size = 1, linetype = "solid")) +
   theme(axis.text.x=element_blank()) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   theme(axis.ticks.x=element_blank()) + theme(axis.ticks.y=element_blank()) + theme(axis.text.y=element_blank())  
 
@@ -725,10 +730,10 @@ inset<-ggplot() + geom_tile(data = dplyr::filter(mask_glkd, !is.na(land)),aes(x 
     axis.text.x=element_blank()
   )
 
-#pdf("global_kd.pdf",width=20,height=16)
-tiff(file="global_kd.tiff",width=12,height=9,units="in",res=300)
+pdf("global_kd_rev.pdf",width=7.25,height=5)
+#tiff(file="global_kd.tiff",width=7.25,height=5,units="in",res=300)
 plot(map)
-print(inset,vp=viewport(width=0.375,height=0.3,x=0.2,y=0.3))
+print(inset,vp=viewport(width=0.3,height=0.3,x=0.2,y=0.3))
 dev.off()
 
 
@@ -782,7 +787,7 @@ ggplot() +
   geom_raster(data = lkarm , aes(x = x, y = y,fill = trans))+
   ylim(mapy) + xlim(mapx) +
   scale_fill_gradientn(na.value = NA,colours = terrain.colors(4),
-                       limits=c(min(Cdat$log10lka_pc_sse,na.rm=T),max(Cdat$log10lka_pc_sse,na.rm=T))) +
+                       limits=c(min(Cdat$log10lka_pc_sse,na.rm=T),0.3)) +
   theme(legend.position = c(0.5,-0.05),legend.direction = "horizontal",
         legend.key.width = unit(0.2,units="npc"),legend.key.height = unit(0.06,units="npc"),
         legend.background =element_blank(),legend.title = element_blank(),legend.box.just = "bottom")+
