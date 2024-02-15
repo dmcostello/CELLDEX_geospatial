@@ -986,17 +986,17 @@ summary(Mex_pine)
 den_oak <- density(Mex_oak,na.rm=T)
 den_pine <- density(Mex_pine,na.rm=T)
 
-#Plotting (Or use color goldenrod2)
-
-png(file="Mex.png",width=5,height=6,units="in",res=300,bg="transparent")
-with(den_oak,plot(x,y,type="l",lwd=4,col="orangered",lty=3,xlim=c(0,0.02),
-                  las=1,ylim=c(0,700),yaxt="n",
+#Plotting
+pdf(file="Mex.pdf",width=3.5,height=4)
+par(mar=c(4,3,1,1))
+with(den_oak,plot(x,y,type="l",lwd=3,col="orangered",lty=2,xlim=c(0,0.015),
+                  las=1,ylim=c(0,800),yaxt="n",
                   ylab="",xlab=expression("Decomposition rate (d"^-1~")"),cex.lab=1.5))
 mtext("Relative frequency",side=2,line=1,cex=1.5)
-with(den_pine,lines(x,y,lwd=4,col="forestgreen"))
+with(den_pine,lines(x,y,lwd=3,col="forestgreen"))
 legend("topright",cex=1.2,
        legend=c(substitute(paste(italic("Pinus"))),
                 substitute(paste(italic("Quercus")))),
-       lwd=4,lty=c(1,3),
+       lwd=3,lty=c(1,2),
        col=c("forestgreen","orangered"),text.col = c("forestgreen","orangered"))
 dev.off()
