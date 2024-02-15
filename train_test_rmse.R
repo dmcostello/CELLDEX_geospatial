@@ -1,16 +1,19 @@
 # Make training and test sets by 80-20 split 
 library(caret)
 set.seed(3)
-# Ideally, we want to split by locations, not actual cotton strips
-# So we may want to wait to delete partnerid until running this split step
-trainIndex <- createDataPartition(Cdat$partnerid, p = .8, list = FALSE, times = 1)
+# For the most rigorous test, we want to split 20% of the partners off for testing
+Cdat_val <- cbind(Cdat,partnerid=C_stb$partnerid)
+length(unique(Cdat_val$partnerid)) *0.2 #26 partners will be in the test dataset
 
-train <- Cdat[ trainIndex,]
-test  <- Cdat[-trainIndex,]
+test.partners <- sample(unique(Cdat_val$partnerid),26,replace = F)
+
+#Split the data set 80-20 into train and test sets
+train <- Cdat_val[!(Cdat_val$partnerid %in% test.partners),]
+test  <- Cdat_val[Cdat_val$partnerid %in% test.partners,]
 
 # Run boosted regression tree model with Gaussian error (e.g. linear regression)
 Cgbm<- gbm(logk~., 
-           data=train, 
+           data=train[,-103], 
            distribution="gaussian",
            n.trees=20000,
            shrinkage=0.001,
@@ -26,9 +29,9 @@ sum<-summary(Cgbm,n.trees=best.iter,method=permutation.test.gbm)
 head(sum,20)
 
 # Calculate pseudo-R2
-print(1-sum((test$logk - predict(Cgbm, newdata=test, n.trees=best.iter))^2)/
+print(1-sum((test$logk - predict(Cgbm, newdata=test[,-103], n.trees=best.iter))^2)/
         sum((test$logk - mean(test$logk))^2))
 
 # Calculate RMSE
 library(Metrics)
-print(rmse(test$logk, predict(Cgbm, newdata=test, n.trees=best.iter)))
+print(rmse(test$logk, predict(Cgbm, newdata=test[,-103], n.trees=best.iter)))

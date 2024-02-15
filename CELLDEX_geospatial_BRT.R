@@ -223,6 +223,11 @@ for(i in 2:length(mod_vars$Variables)){
 
 dim(Cdat) #102 total variables
 
+##########################
+#### Validation model ####
+##########################
+
+Cdat_val <- cbind(Cdat,partnerid=C_stb$partnerid)
 
 ######################################
 #### BRT to predict cotton decomp ####
