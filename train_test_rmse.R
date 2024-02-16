@@ -35,3 +35,26 @@ print(1-sum((test$logk - predict(Cgbm, newdata=test[,-103], n.trees=best.iter))^
 # Calculate RMSE
 library(Metrics)
 print(rmse(test$logk, predict(Cgbm, newdata=test[,-103], n.trees=best.iter)))
+print(rmse(train$logk, predict(Cgbm, newdata=train[,-103], n.trees=best.iter)))
+
+# Leave-one-out cross validation
+partners <- unique(Cdat_val$partnerid)
+
+cv.mse <- rep(0,length(partners))
+for(i in 1:length(partners)){
+  subdata <- Cdat_val[!(Cdat_val$partnerid %in% partners[i]),]
+  outdata <- Cdat_val[(Cdat_val$partnerid %in% partners[i]),]
+
+  loo_mod<- gbm(logk~., 
+             data=subdata[,-103], 
+             distribution="gaussian",
+             n.trees=20000,
+             shrinkage=0.001,
+             interaction.depth=5,
+             cv.folds=20)
+  
+  loo_it <- gbm.perf(loo_mod,method="cv")
+  cv.mse[i] <- rmse(outdata$logk,predict(loo_mod, newdata=outdata[,-103], n.trees=loo_it))
+  print(cv.mse[i])
+  print(paste("step =", i))
+}
