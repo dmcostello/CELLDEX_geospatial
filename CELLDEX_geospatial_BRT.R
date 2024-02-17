@@ -244,6 +244,7 @@ Cgbm<- gbm(logk~.,
 
 # Check performance
 (best.iter <- gbm.perf(Cgbm,method="cv"))
+Cgbm$cv.error[best.iter]
 
 # Plot variable influence based on the estimated best number of trees
 sum<-summary(Cgbm,n.trees=best.iter,method=permutation.test.gbm) 
