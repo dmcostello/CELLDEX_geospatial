@@ -882,12 +882,12 @@ nlitrug<-data.frame(rug=quantile(Fdat$N_Litter_Mn,probs=qs,na.rm=T))
 
 # Make partial dependence plots in ggplot
 cols<-c("brown","forestgreen")
-pf1 <- ggplot(data = lnpredk, aes(ln_pred_k, y)) +
-  geom_rug(aes(x=rug,y=min(meantemp$y)),data=kdrug,col="grey",sides="b",length=unit(0.07,"npc")) +
+ggplot(data = lnpredk, aes(ln_pred_k, y)) +
+  geom_rug(aes(x=rug,y=0),data=kdrug,col="black",sides="b",length=unit(0.07,"npc")) +
   geom_smooth(aes(color=Mesh.size),method="gam",se=T) +
   geom_line(aes(color=Mesh.size),linetype=1,alpha=0.25,linewidth=0.25) +
   scale_color_manual(values=cols, labels=c("Detritivore+Microbe","Microbe")) +
-  ylab("") + xlab(bquote('ln Predicted' ~K[d]~"(d"^-1*")")) + 
+  ylab("") + xlab(bquote('Predicted cotton decomp (' ~K[d]~"d"^-1*")")) + 
   ylim(c(-5.5,-3.3)) +
   annotate("text", x = max(lnpredk$ln_pred_k), y=-3.5, label = "A",size=6) +
   guides(linetype = guide_legend(ncol = 1)) + guides(color=guide_legend(ncol=1))+
@@ -901,7 +901,7 @@ pf1 <- ggplot(data = lnpredk, aes(ln_pred_k, y)) +
         )
 
 pf2<-ggplot(data = lig, aes(Lignin_Litter_Mn, y)) +
-  geom_rug(aes(x=rug,y=min(meantemp$y)),data=ligrug,col="grey",sides="b",length=unit(0.07,"npc")) +
+  geom_rug(aes(x=rug,y=0),data=ligrug,col="black",sides="b",length=unit(0.07,"npc")) +
   geom_line(color = "steelblue", size = 1) +
   ylab("") + ylim(c(-4.8,-4)) +
   xlab("Litter lignin (% dm)") +
@@ -912,22 +912,11 @@ pf2<-ggplot(data = lig, aes(Lignin_Litter_Mn, y)) +
         panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 
 pf3<-ggplot(data = c2n, aes(CtoN_Litter_Mn, y)) +
-  geom_rug(aes(x=rug,y=min(meantemp$y)),data=c2nrug,col="grey",sides="b",length=unit(0.07,"npc")) +
+  geom_rug(aes(x=rug,y=0),data=c2nrug,col="black",sides="b",length=unit(0.07,"npc")) +
   geom_line(color = "steelblue", size = 1) +
   ylab("") + ylim(c(-4.8,-4)) +
   xlab("Litter C:N (molar)") +
   annotate("text", x = max(c2n$CtoN_Litter_Mn), y=-4.1, label = "C",size=6) +
-  theme(panel.background = element_rect(fill = "transparent", colour = NA),  
-        plot.background = element_rect(fill = "transparent", colour = NA),
-        axis.line = element_line(colour = "black"),
-        panel.grid.major = element_blank(), panel.grid.minor = element_blank())
-
-pf4<-ggplot(data = nlit, aes(N_Litter_Mn, y)) +
-  geom_rug(aes(x=rug,y=min(meantemp$y)),data=nlitrug,col="grey",sides="b",length=unit(0.07,"npc")) +
-  geom_line(color = "steelblue", size = 1) +
-  ylab("") + ylim(c(-4.8,-4)) +
-  xlab("Litter N (% dm)") +
-  annotate("text", x = max(nlit$N_Litter_Mn), y=-4.1, label = "D",size=6) +
   theme(panel.background = element_rect(fill = "transparent", colour = NA),  
         plot.background = element_rect(fill = "transparent", colour = NA),
         axis.line = element_line(colour = "black"),
