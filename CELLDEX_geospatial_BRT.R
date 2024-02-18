@@ -869,63 +869,86 @@ dev.off()
 
 # Get grids of x variable values and predictions to make partial dependence plots
 lnpredk<-plot(Fgbm,i.var=c('ln_pred_k','Mesh.size'),return.grid=TRUE)
+lnpredk$logx <- lnpredk$ln_pred_k/2.303 #Convert ln to log10 for plotting
 lig<-plot(Fgbm,i.var='Lignin_Litter_Mn',return.grid=TRUE)
 c2n<-plot(Fgbm,i.var='CtoN_Litter_Mn',return.grid=TRUE)
 nlit <- plot(Fgbm,i.var='N_Litter_Mn',return.grid=TRUE)
 
 # Get deciles of the x variable for rug plots
 qs <- seq(0,1,0.1)
-kdrug<-data.frame(rug=quantile(Fdat$ln_pred_k,probs=qs,na.rm=T))
+kdrug<-data.frame(rug=quantile(Fdat$ln_pred_k,probs=qs,na.rm=T)/2.303)
 c2nrug<-data.frame(rug=quantile(Fdat$CtoN_Litter_Mn,probs=qs,na.rm=T))
 ligrug<-data.frame(rug=quantile(Fdat$Lignin_Litter_Mn,probs=qs,na.rm=T))
 nlitrug<-data.frame(rug=quantile(Fdat$N_Litter_Mn,probs=qs,na.rm=T))
 
 # Make partial dependence plots in ggplot
 cols<-c("brown","forestgreen")
-ggplot(data = lnpredk, aes(ln_pred_k, y)) +
+pf1 <- ggplot(data = lnpredk, aes(logx, exp(y))) +
   geom_rug(aes(x=rug,y=0),data=kdrug,col="black",sides="b",length=unit(0.07,"npc")) +
   geom_smooth(aes(color=Mesh.size),method="gam",se=T) +
   geom_line(aes(color=Mesh.size),linetype=1,alpha=0.25,linewidth=0.25) +
   scale_color_manual(values=cols, labels=c("Detritivore+Microbe","Microbe")) +
-  ylab("") + xlab(bquote('Predicted cotton decomp (' ~K[d]~"d"^-1*")")) + 
-  ylim(c(-5.5,-3.3)) +
-  annotate("text", x = max(lnpredk$ln_pred_k), y=-3.5, label = "A",size=6) +
+  ylab("") + xlab(bquote('Cellulose decomp rate (K'[d]~" d"^-1*")")) + 
+  annotate("text", x = -1, y=0.025, label = "A",fontface="bold") +
   guides(linetype = guide_legend(ncol = 1)) + guides(color=guide_legend(ncol=1))+
   theme(panel.background = element_rect(fill = "transparent", colour = NA),  
         plot.background = element_rect(fill = "transparent", colour = NA),
         axis.line = element_line(colour = "black"),
+        axis.text.x = element_text(vjust = -2),
+        axis.title.x = element_text(vjust=-0.5),
+        axis.title = element_text(size = 9),axis.text=element_text(size=9),
         panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
         legend.position=c(0.3,0.85), 
         legend.background = element_rect(fill="transparent",colour=NA),
-        legend.title = element_blank()
-        )
+        legend.title = element_blank())+
+  annotation_logticks(sides = "b",outside = T) +
+coord_cartesian(clip = "off",ylim=c(0.004,0.025), xlim=log10(c(0.002,0.1))) + 
+  scale_x_continuous(breaks=log10(c(0.002,0.005,0.01,0.02,0.05,0.1)),
+                     labels=c(0.002,0.005,0.01,0.02,0.05,0.1))
 
-pf2<-ggplot(data = lig, aes(Lignin_Litter_Mn, y)) +
-  geom_rug(aes(x=rug,y=0),data=ligrug,col="black",sides="b",length=unit(0.07,"npc")) +
+pf2<-ggplot(data = lig, aes(Lignin_Litter_Mn, exp(y))) +
+  geom_rug(aes(x=rug,y=0),data=ligrug,position="jitter",col="black",sides="b",length=unit(0.07,"npc")) +
   geom_line(color = "steelblue", size = 1) +
-  ylab("") + ylim(c(-4.8,-4)) +
+  ylab("") + ylim(c(0.004,0.025)) +
   xlab("Litter lignin (% dm)") +
-  annotate("text", x = max(lig$Lignin_Litter_Mn), y=-4.1, label = "B",size=6) +
+  annotate("text", x = max(lig$Lignin_Litter_Mn), y=0.025, label = "B",fontface="bold") +
   theme(panel.background = element_rect(fill = "transparent", colour = NA),  
         plot.background = element_rect(fill = "transparent", colour = NA),
+        axis.title = element_text(size = 9),axis.text=element_text(size=9),
         axis.line = element_line(colour = "black"),
         panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 
-pf3<-ggplot(data = c2n, aes(CtoN_Litter_Mn, y)) +
-  geom_rug(aes(x=rug,y=0),data=c2nrug,col="black",sides="b",length=unit(0.07,"npc")) +
+pf3<-ggplot(data = c2n, aes(CtoN_Litter_Mn, exp(y))) +
+  geom_rug(aes(x=rug,y=0),data=c2nrug,position="jitter",col="black",sides="b",length=unit(0.07,"npc")) +
   geom_line(color = "steelblue", size = 1) +
-  ylab("") + ylim(c(-4.8,-4)) +
+  ylab("") + ylim(c(0.004,0.025)) +
   xlab("Litter C:N (molar)") +
-  annotate("text", x = max(c2n$CtoN_Litter_Mn), y=-4.1, label = "C",size=6) +
+  annotate("text", x = 140, y=0.025, label = "C",fontface="bold") +
   theme(panel.background = element_rect(fill = "transparent", colour = NA),  
         plot.background = element_rect(fill = "transparent", colour = NA),
+        axis.title = element_text(size = 9),axis.text=element_text(size=9),
+        axis.line = element_line(colour = "black"),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+coord_cartesian(clip = "off",ylim=c(0.004,0.025), xlim=c(20,140)) + 
+  scale_x_continuous(breaks=seq(20,140,20),
+                     labels=seq(20,140,20))
+
+pf4<-ggplot(data = nlit, aes(N_Litter_Mn, exp(y))) +
+  geom_rug(aes(x=rug,y=0),data=nlitrug,position="jitter",col="black",sides="b",length=unit(0.07,"npc")) +
+  geom_line(color = "steelblue", size = 1) +
+  ylab("") + ylim(c(0.004,0.025)) +
+  xlab("Litter N (% dm)") +
+  annotate("text", x = max(nlit$N_Litter_Mn), y=0.025, label = "D",fontface="bold") +
+  theme(panel.background = element_rect(fill = "transparent", colour = NA),  
+        plot.background = element_rect(fill = "transparent", colour = NA),
+        axis.title = element_text(size = 9),axis.text=element_text(size=9),
         axis.line = element_line(colour = "black"),
         panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 
 # Make trellis of the top 3 partial dependence plots
-#pdf(file = "validation_pdps_3.pdf",width=4,height=8)
-tiff(file="validation_pdps_3.tiff",width=4,height=8,units="in",res=300)
-grid.arrange(pf1,pf2,pf3,pf4, ncol = 1,left=textGrob(bquote('ln' ~K[d]~"(d"^-1*")"),rot=90))
+pdf(file = "validation_pdps_rev.pdf",width=3.625,height=7)
+#tiff(file="validation_pdps_3.tiff",width=4,height=8,units="in",res=300)
+grid.arrange(pf1,pf2,pf3,pf4, ncol = 1,left=textGrob(bquote('Litter decomposition rate (K'[d]~" d"^-1*")"),rot=90))
 dev.off()
 
 ######################################
