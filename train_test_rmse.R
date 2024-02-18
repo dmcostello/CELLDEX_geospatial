@@ -54,7 +54,9 @@ for(i in 1:length(partners)){
              cv.folds=20)
   
   loo_it <- gbm.perf(loo_mod,method="cv")
-  cv.mse[i] <- rmse(outdata$logk,predict(loo_mod, newdata=outdata[,-103], n.trees=loo_it))
-  print(cv.mse[i])
+  loo.rmse[i] <- rmse(outdata$logk,predict(loo_mod, newdata=outdata[,-103], n.trees=loo_it))
+  print(loo.rmse[i])
   print(paste("step =", i))
 }
+
+write.csv(cbind(loo.rmse,partners),"~/Desktop/loo.rmse.csv")
