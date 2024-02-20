@@ -13,6 +13,7 @@ library(fasterize)
 #library(glwdr) #Broken dependency as of 20 Feb 2024
 library(parallel)
 library(ggplot2)
+library(png)
 library(cowplot)
 library(leaflet)
 library(caret)
@@ -655,8 +656,8 @@ ps6<-ggplot(data = mty, aes(tmp_dc_uyr, exp(y))) +
         axis.title = element_text(size = 9),axis.text=element_text(size=9))
 
 # Make trellis of the top 6 partial dependence plots
-pdf(file = "stream_pdps_6rev.pdf",width=7.25,height=7)
-#tiff(file="stream_pdps_6rev.tiff",width=8,height=8,units="in",res=300)
+pdf(file = "Fig1_rev.pdf",width=7.25,height=7)
+#tiff(file="Fig1_rev.tiff",width=7.25,height=7,units="in",res=300)
 grid.arrange(ps1,ps2,ps3,ps4,ps5,ps6, ncol = 2,
              left=textGrob(bquote('Cellulose decomposition rate (K'[d]~" d"^-1*")"),
                            rot=90,gp = gpar(fontsize = 9)))
@@ -756,7 +757,7 @@ inset<-ggplot() + geom_tile(data = dplyr::filter(mask_glkd, !is.na(land)),aes(x 
 
 # Publication map
 pdf("Fig2_rev.pdf",width=7.25,height=5)
-#tiff(file="global_kd.tiff",width=7.25,height=5,units="in",res=300)
+#tiff(file="Fig2_rev.tiff",width=7.25,height=5,units="in",res=300)
 plot(map)
 print(inset,vp=viewport(width=0.3,height=0.3,x=0,y=0.28,just="left"))
 dev.off()
@@ -975,9 +976,9 @@ pf4<-ggplot(data = nlit, aes(N_Litter_Mn, exp(y))) +
         axis.line = element_line(colour = "black"),
         panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 
-# Make trellis of the top 3 partial dependence plots
+# Make trellis of the top 4 partial dependence plots
 pdf(file = "Fig3_rev.pdf",width=3.625,height=7)
-#tiff(file="validation_pdps_3.tiff",width=4,height=8,units="in",res=300)
+#tiff(file="Fig3_rev.tiff",width=3.625,height=7,units="in",res=300)
 grid.arrange(pf1,pf2,pf3,pf4, ncol = 1,left=textGrob(bquote('Litter decomposition rate (K'[d]~" d"^-1*")"),rot=90))
 dev.off()
 
