@@ -703,9 +703,9 @@ colnames(xy)<-c("x","y","temp")
 # Make map figures in ggplot
 map<-ggplot() + borders(fill="lightgray") + geom_raster(data = mask_glkd , aes(x = x, y = y,fill = ln.Mean.Stream.Kd)) + 
   scale_fill_gradientn(colors=rev(c("black","darkred", "red", "orange", "yellow","darkgreen","darkolivegreen3","darkolivegreen2", "lightgreen","blue","violet","lightgray")),
-                       na.value=NA,name=bquote('Stream' ~K[d]),
+                       na.value=NA,name=bquote('Cellulose' ~K[d]),
                        labels=c(0.005,0.01,0.02,0.03,0.05,0.08),
-                       breaks=log(c(0.005,0.01,0.02,0.03,0.05,0.08)),limits=c(log(0.003),log(0.1)))+
+                       breaks=log(c(0.005,0.01,0.02,0.03,0.05,0.08)),limits=c(log(0.003),log(0.08)))+
   xlab("") + ylab("") + theme(legend.position = c(0.1, 0.75),legend.box.background = element_blank(),
                               legend.background = element_blank(),legend.title = element_text(size=9),legend.text = element_text(size=9)) + 
   theme(panel.background = element_rect(fill = "white",colour = "white",size = 1, linetype = "solid")) +
