@@ -910,9 +910,9 @@ coord_cartesian(clip = "off",ylim=c(0.004,0.025), xlim=log10(c(0.002,0.1))) +
 pf2<-ggplot(data = lig, aes(Lignin_Litter_Mn, exp(y))) +
   geom_rug(aes(x=rug,y=0),data=ligrug,position="jitter",col="black",sides="b",length=unit(0.07,"npc")) +
   geom_line(color = "steelblue", size = 1) +
-  ylab("") + ylim(c(0.004,0.025)) +
+  ylab("") + ylim(c(0.007,0.02)) +
   xlab("Litter lignin (% dm)") +
-  annotate("text", x = max(lig$Lignin_Litter_Mn), y=0.025, label = "B",fontface="bold") +
+  annotate("text", x = max(lig$Lignin_Litter_Mn), y=0.02, label = "B",fontface="bold") +
   theme(panel.background = element_rect(fill = "transparent", colour = NA),  
         plot.background = element_rect(fill = "transparent", colour = NA),
         axis.title = element_text(size = 9),axis.text=element_text(size=9),
@@ -922,24 +922,24 @@ pf2<-ggplot(data = lig, aes(Lignin_Litter_Mn, exp(y))) +
 pf3<-ggplot(data = c2n, aes(CtoN_Litter_Mn, exp(y))) +
   geom_rug(aes(x=rug,y=0),data=c2nrug,position="jitter",col="black",sides="b",length=unit(0.07,"npc")) +
   geom_line(color = "steelblue", size = 1) +
-  ylab("") + ylim(c(0.004,0.025)) +
+  ylab("") + 
   xlab("Litter C:N (molar)") +
-  annotate("text", x = 140, y=0.025, label = "C",fontface="bold") +
+  annotate("text", x = 140, y=0.02, label = "C",fontface="bold") +
   theme(panel.background = element_rect(fill = "transparent", colour = NA),  
         plot.background = element_rect(fill = "transparent", colour = NA),
         axis.title = element_text(size = 9),axis.text=element_text(size=9),
         axis.line = element_line(colour = "black"),
         panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-coord_cartesian(clip = "off",ylim=c(0.004,0.025), xlim=c(20,140)) + 
+coord_cartesian(clip = "off",ylim=c(0.007,0.02), xlim=c(20,140)) + 
   scale_x_continuous(breaks=seq(20,140,20),
                      labels=seq(20,140,20))
 
 pf4<-ggplot(data = nlit, aes(N_Litter_Mn, exp(y))) +
   geom_rug(aes(x=rug,y=0),data=nlitrug,position="jitter",col="black",sides="b",length=unit(0.07,"npc")) +
   geom_line(color = "steelblue", size = 1) +
-  ylab("") + ylim(c(0.004,0.025)) +
+  ylab("") + ylim(c(0.007,0.02)) +
   xlab("Litter N (% dm)") +
-  annotate("text", x = max(nlit$N_Litter_Mn), y=0.025, label = "D",fontface="bold") +
+  annotate("text", x = max(nlit$N_Litter_Mn), y=0.02, label = "D",fontface="bold") +
   theme(panel.background = element_rect(fill = "transparent", colour = NA),  
         plot.background = element_rect(fill = "transparent", colour = NA),
         axis.title = element_text(size = 9),axis.text=element_text(size=9),
@@ -947,7 +947,7 @@ pf4<-ggplot(data = nlit, aes(N_Litter_Mn, exp(y))) +
         panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 
 # Make trellis of the top 3 partial dependence plots
-pdf(file = "validation_pdps_rev.pdf",width=3.625,height=7)
+pdf(file = "Fig3_rev.pdf",width=3.625,height=7)
 #tiff(file="validation_pdps_3.tiff",width=4,height=8,units="in",res=300)
 grid.arrange(pf1,pf2,pf3,pf4, ncol = 1,left=textGrob(bquote('Litter decomposition rate (K'[d]~" d"^-1*")"),rot=90))
 dev.off()
