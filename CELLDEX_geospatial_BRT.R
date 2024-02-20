@@ -702,7 +702,7 @@ colnames(xy)<-c("x","y","temp")
 
 # Make map figures in ggplot
 map<-ggplot() + borders(fill="lightgray") + geom_raster(data = mask_glkd , aes(x = x, y = y,fill = ln.Mean.Stream.Kd)) + 
-  scale_fill_gradientn(colors=rev(c("lightgray","darkred", "red", "orange", "yellow","darkgreen","darkolivegreen3","darkolivegreen2", "lightgreen","blue","violet","lightgray")),
+  scale_fill_gradientn(colors=rev(c("black","darkred", "red", "orange", "yellow","darkgreen","darkolivegreen3","darkolivegreen2", "lightgreen","blue","violet","lightgray")),
                        na.value=NA,name=bquote('Stream' ~K[d]),
                        labels=c(0.005,0.01,0.02,0.03,0.05,0.08),
                        breaks=log(c(0.005,0.01,0.02,0.03,0.05,0.08)),limits=c(log(0.003),log(0.1)))+
@@ -727,13 +727,14 @@ inset<-ggplot() + geom_tile(data = dplyr::filter(mask_glkd, !is.na(land)),aes(x 
     axis.ticks.x=element_blank(), 
     axis.ticks.y=element_blank(), 
     axis.text.y=element_blank(),
-    axis.text.x=element_blank()
+    axis.text.x=element_blank(),
+    panel.border = element_rect(colour = "black", fill=NA, size=1)
   )
 
-pdf("global_kd_rev.pdf",width=7.25,height=5)
+pdf("Fig2_rev.pdf",width=7.25,height=5)
 #tiff(file="global_kd.tiff",width=7.25,height=5,units="in",res=300)
 plot(map)
-print(inset,vp=viewport(width=0.3,height=0.3,x=0.2,y=0.3))
+print(inset,vp=viewport(width=0.3,height=0.3,x=0.2,y=0.28))
 dev.off()
 
 
