@@ -10,7 +10,7 @@ library(pdp)
 library(gridExtra)
 library(grid)
 library(fasterize)
-library(glwdr)
+#library(glwdr) #Broken dependency as of 20 Feb 2024
 library(parallel)
 library(ggplot2)
 library(cowplot)
@@ -370,8 +370,11 @@ grv2$gl_kd[is.na(grv2$HYBAS_ID)]<-NA
 values<-grv2$gl_kd
 global_kd <- setValues(gr,values)
 
-# Load large lakes from glwdr to mask out lake pixels
-lakes <- st_read("glwd_1.shp")
+# Load large lakes to mask out lake pixels
+# Map used to be from package glwdr, but now broken dependency
+# Shape file can be downloaded at https://www.worldwildlife.org/publications/global-lakes-and-wetlands-database-large-lake-polygons-level-1
+#lakes <- glwd_load(level = 1) broken package
+lakes <- st_read("./GLWD_level1/glwd_1.shp")
 global_kd<-mask(global_kd,lakes,inverse=T)
 
 #writeRaster(global_kd,"global_kd.tif")
@@ -712,9 +715,20 @@ colnames(xy)<-c("x","y","temp")
 # Make map figures in ggplot
 map<-ggplot() + borders(fill="lightgray") + geom_raster(data = mask_glkd , aes(x = x, y = y,fill = ln.Mean.Stream.Kd)) + 
   scale_fill_gradientn(colors=rev(c("black","darkred", "red", "orange", "yellow","darkgreen","darkolivegreen3","darkolivegreen2", "lightgreen","blue","violet","lightgray")),
-                       na.value=NA,name=bquote('Cellulose' ~K[d]),
-                       labels=c(0.005,0.01,0.02,0.03,0.05,0.08),
-                       breaks=log(c(0.005,0.01,0.02,0.03,0.05,0.08)),limits=c(log(0.003),log(0.08)))+
+                       na.value=NA,name=bquote('Cellulose K'[d]~" (d"^-1*")"),
+                       labels=c(NA,0.005,0.01,0.02,0.03,0.05,0.08),
+                       breaks=log(c(0.003,0.005,0.01,0.02,0.03,0.05,0.08)),limits=c(log(0.003),log(0.08)))+
+  xlab("") + ylab("") + theme(legend.position = c(0.1, 0.75),legend.box.background = element_blank(),
+                              legend.background = element_blank(),legend.title = element_text(size=9),legend.text = element_text(size=9)) + 
+  theme(panel.background = element_rect(fill = "white",colour = "white",size = 1, linetype = "solid")) +
+  theme(axis.text.x=element_blank()) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.ticks.x=element_blank()) + theme(axis.ticks.y=element_blank()) + theme(axis.text.y=element_blank())  
+
+CBmap <- ggplot() + borders(fill="lightgray") + geom_raster(data = mask_glkd , aes(x = x, y = y,fill = ln.Mean.Stream.Kd)) + 
+  scale_fill_gradientn(colors=c("lightgray","#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7"),
+                       na.value=NA,name=bquote('Cellulose K'[d]~" (d"^-1*")"),
+                       labels=c(NA,0.005,0.007,0.012,0.02,0.03,0.05,0.08),
+                       breaks=log(c(0.003,0.005,0.007,0.012,0.02,0.03,0.05,0.08)),limits=c(log(0.003),log(0.08)))+
   xlab("") + ylab("") + theme(legend.position = c(0.1, 0.75),legend.box.background = element_blank(),
                               legend.background = element_blank(),legend.title = element_text(size=9),legend.text = element_text(size=9)) + 
   theme(panel.background = element_rect(fill = "white",colour = "white",size = 1, linetype = "solid")) +
@@ -740,12 +754,18 @@ inset<-ggplot() + geom_tile(data = dplyr::filter(mask_glkd, !is.na(land)),aes(x 
     panel.border = element_rect(colour = "black", fill=NA, size=1)
   )
 
+# Publication map
 pdf("Fig2_rev.pdf",width=7.25,height=5)
 #tiff(file="global_kd.tiff",width=7.25,height=5,units="in",res=300)
 plot(map)
 print(inset,vp=viewport(width=0.3,height=0.3,x=0.2,y=0.28))
 dev.off()
 
+# Supplemental color blind-friendly map 
+pdf("CB_map.pdf",width=7.25,height=5)
+plot(CBmap)
+print(inset,vp=viewport(width=0.3,height=0.3,x=0.2,y=0.28))
+dev.off()
 
 #Background predictor maps
 #Limnicity
@@ -1058,6 +1078,8 @@ for(i in 1:length(partners)){
   print(paste("step =", i))
 }
 
+summary(loo.rmse) #Mean RMSE across all partners is 1.08
+
 #write.csv(cbind(loo.rmse,partners),"~/Desktop/loo.rmse.csv")
 
 #################################
@@ -1068,6 +1090,7 @@ for(i in 1:length(partners)){
 #A random 80% of the data were used to train the model and the remaining 20% was used to calculate predictive error.
 #Tested multiple random 80% training sets, and got similar RMSE each time (+/-0.05)
 
+set.seed(5)
 #Split data into training (80%) and test data (20%)
 trainIndex <- createDataPartition(Fdat$logk, p = 0.8, list = FALSE, times = 1)
 train <- Fdat[ trainIndex,]
