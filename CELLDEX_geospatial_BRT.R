@@ -15,6 +15,8 @@ library(parallel)
 library(ggplot2)
 library(cowplot)
 library(leaflet)
+library(caret)
+library(Metrics)
 
 set.seed(15)
 
@@ -244,7 +246,7 @@ Cgbm<- gbm(logk~.,
 
 # Check performance
 (best.iter <- gbm.perf(Cgbm,method="cv"))
-Cgbm$cv.error[best.iter]
+sqrt(Cgbm$cv.error[best.iter]) #RMSE for cellulose model
 
 # Plot variable influence based on the estimated best number of trees
 sum<-summary(Cgbm,n.trees=best.iter,method=permutation.test.gbm) 
@@ -508,6 +510,7 @@ Fgbm<- gbm(logk~.,
 
 # Check performance
 (best.iter2 <- gbm.perf(Fgbm,method="cv"))
+sqrt(Fgbm$cv.error[best.iter]) #RMSE for litter model
 
 # Plot variable influence based on the estimated best number of trees
 Fsum<-summary(Fgbm,n.trees=best.iter2,method=permutation.test.gbm) 
@@ -1019,3 +1022,67 @@ legend("topright",cex=1.2,
        lwd=3,lty=c(1,2),
        col=c("forestgreen","orangered"),text.col = c("forestgreen","orangered"))
 dev.off()
+
+
+####################################
+#### Cellulose model validation ####
+####################################
+
+#Hierarchical spatial structure of data: 131 total partners measured cellulose decay in ~4 local streams
+#Used a "leave-one-out" approach to validate predictive power of the cellulose model.
+#Ran 131 versions of the BRT each with 1 partner (i.e., region) excluded.
+#Calculated root mean square error (RMSE) of the left-out partner decomp rates
+#Summarized model prediction error as average RMSE from all 131 partners
+
+#WARNING: This code will take a long time to run
+
+partners <- unique(Cdat_val$partnerid) #List of unique partners
+
+#Function to run BRT with each partner excluded and store in loo.rmse vector 
+loo.rmse <- rep(0,length(partners))
+for(i in 1:length(partners)){
+  subdata <- Cdat_val[!(Cdat_val$partnerid %in% partners[i]),]
+  outdata <- Cdat_val[(Cdat_val$partnerid %in% partners[i]),]
+  
+  loo_mod<- gbm(logk~., 
+                data=subdata[,-103], 
+                distribution="gaussian",
+                n.trees=20000,
+                shrinkage=0.001,
+                interaction.depth=5,
+                cv.folds=20)
+  
+  loo_it <- gbm.perf(loo_mod,method="cv")
+  loo.rmse[i] <- rmse(outdata$logk,predict(loo_mod, newdata=outdata[,-103], n.trees=loo_it))
+  print(loo.rmse[i])
+  print(paste("step =", i))
+}
+
+#write.csv(cbind(loo.rmse,partners),"~/Desktop/loo.rmse.csv")
+
+#################################
+#### Litter model validation ####
+#################################
+
+#With more litter decomp data and no hierarchical structure we used a 80:20 validation approach
+#A random 80% of the data were used to train the model and the remaining 20% was used to calculate predictive error.
+#Tested multiple random 80% training sets, and got similar RMSE each time (+/-0.05)
+
+#Split data into training (80%) and test data (20%)
+trainIndex <- createDataPartition(Fdat$logk, p = 0.8, list = FALSE, times = 1)
+train <- Fdat[ trainIndex,]
+test  <- Fdat[-trainIndex,]
+
+#Run BRT with same parameters as above
+Fgbm_val<- gbm(logk~., 
+               data=train, 
+               distribution="gaussian",
+               n.trees=50000,
+               shrinkage=0.001,
+               interaction.depth=5,
+               cv.folds=20)
+
+(best.lit.val <- gbm.perf(Fgbm_val,method="cv"))
+
+#Calculate RMSE of test data
+print(rmse(test$logk, predict(Fgbm_val, newdata=test, n.trees=best.lit.val)))
