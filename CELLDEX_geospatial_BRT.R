@@ -736,8 +736,8 @@ CBmap <- ggplot() + borders(fill="lightgray") + geom_raster(data = mask_glkd , a
   theme(axis.ticks.x=element_blank()) + theme(axis.ticks.y=element_blank()) + theme(axis.text.y=element_blank())  
 
 inset<-ggplot() + geom_tile(data = dplyr::filter(mask_glkd, !is.na(land)),aes(x = x, y = y), fill = "cornsilk2") +
-  geom_point(data=xy,aes(x=x,y=y),col="red",fill="red",size=1,shape=21) + 
-  geom_point(data=fsxy,aes(x=x,y=y),col="black",fill="transparent",size=1,shape=21) +
+  geom_point(data=xy,aes(x=x,y=y),col="lightcoral",fill="lightcoral",size=0.6,shape=21) + 
+  geom_point(data=fsxy,aes(x=x,y=y),col="honeydew4",fill="transparent",size=1,shape=21,stroke=0.3) +
   xlab("") + ylab("") + 
   theme(legend.position = "none",legend.box.background = element_blank(),legend.background = element_blank()) + 
   theme(
@@ -751,20 +751,20 @@ inset<-ggplot() + geom_tile(data = dplyr::filter(mask_glkd, !is.na(land)),aes(x 
     axis.ticks.y=element_blank(), 
     axis.text.y=element_blank(),
     axis.text.x=element_blank(),
-    panel.border = element_rect(colour = "black", fill=NA, size=1)
+    panel.border = element_rect(colour = "black", fill=NA, size=0.5)
   )
 
 # Publication map
 pdf("Fig2_rev.pdf",width=7.25,height=5)
 #tiff(file="global_kd.tiff",width=7.25,height=5,units="in",res=300)
 plot(map)
-print(inset,vp=viewport(width=0.3,height=0.3,x=0.2,y=0.28))
+print(inset,vp=viewport(width=0.3,height=0.3,x=0,y=0.28,just="left"))
 dev.off()
 
 # Supplemental color blind-friendly map 
 pdf("CB_map.pdf",width=7.25,height=5)
 plot(CBmap)
-print(inset,vp=viewport(width=0.3,height=0.3,x=0.2,y=0.28))
+print(inset,vp=viewport(width=0.3,height=0.3,x=0,y=0.28,just="left"))
 dev.off()
 
 #Background predictor maps
@@ -1092,6 +1092,9 @@ summary(loo.rmse) #Mean RMSE across all partners is 1.08
 
 set.seed(5)
 #Split data into training (80%) and test data (20%)
+starts <- 20 #Do 20 random starts
+litter.rmse <- rep(0,length(starts))
+for(i in 1:starts){
 trainIndex <- createDataPartition(Fdat$logk, p = 0.8, list = FALSE, times = 1)
 train <- Fdat[ trainIndex,]
 test  <- Fdat[-trainIndex,]
@@ -1108,4 +1111,8 @@ Fgbm_val<- gbm(logk~.,
 (best.lit.val <- gbm.perf(Fgbm_val,method="cv"))
 
 #Calculate RMSE of test data
-print(rmse(test$logk, predict(Fgbm_val, newdata=test, n.trees=best.lit.val)))
+litter.rmse[i] <- rmse(test$logk, predict(Fgbm_val, newdata=test, n.trees=best.lit.val))
+print(litter.rmse[i])
+}
+
+summary(litter.rmse)
