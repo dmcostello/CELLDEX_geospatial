@@ -764,6 +764,7 @@ dev.off()
 
 # Supplemental color blind-friendly map 
 pdf("CB_map.pdf",width=7.25,height=5)
+#tiff("CB_map.tiff",width=7.25,height=5,units="in",res=300)
 plot(CBmap)
 print(inset,vp=viewport(width=0.3,height=0.3,x=0,y=0.28,just="left"))
 dev.off()
@@ -982,9 +983,9 @@ pdf(file = "Fig3_rev.pdf",width=3.625,height=7)
 grid.arrange(pf1,pf2,pf3,pf4, ncol = 1,left=textGrob(bquote('Litter decomposition rate (K'[d]~" d"^-1*")"),rot=90))
 dev.off()
 
-######################################
-#### FIGURE S1 - Pine bark beetle ####
-######################################
+#####################################
+#### FIGURE 4 - Pine bark beetle ####
+#####################################
 
 #SOURCE: Gonzalez-Hernandez et al. 2020 Modelling potential distribution of a pine bark beetle in Mexican 
 #temperate forests using forecast data and spatial analysis tools. https://link.springer.com/article/10.1007/s11676-018-0858-4
