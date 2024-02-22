@@ -16,6 +16,7 @@ library(ggplot2)
 library(png)
 library(cowplot)
 library(leaflet)
+library(Hmisc)
 library(caret)
 library(Metrics)
 
@@ -1045,6 +1046,40 @@ legend("topright",cex=1.2,
        col=c("forestgreen","orangered"),text.col = c("forestgreen","orangered"))
 dev.off()
 
+# More variation in oak than pine. What best predicts the difference between pine and oak?
+
+#Extract HydroBASINS data at sites
+Mex_cot2 <- merge(pine[pine$beetle=="1",],basin_dat,all.y=F,by="HYBAS_ID")
+Mex_cot2$dif <- Mex_oak-Mex_pine
+
+#Find best correlations with difference in decay rate
+cortab<-rcorr(as.matrix(Mex_cot2[,c(299,17:297)]))
+sort(cortab$r[1,]) #Sorted correlations between HydroBASINS attributes and difference in decay rate
+#Soil water content in Sept-Nov AET in Sept and CMI in Sept were most strongly correlated
+#Show the annual averages for simplicity
+
+#Calculate correlation coefficients
+with(Mex_cot2,cor.test(dif,cmi_ix_syr))
+with(Mex_cot2,cor.test(dif,aet_mm_syr))
+with(Mex_cot2,cor.test(dif,swc_pc_syr))
+
+### Supplemental Figure 2 ###
+
+pdf(file="FigS2_corr.pdf",height=3,width=6, pointsize=9)
+#tiff(file="FigS2_corr.tiff",height=3,width=6, pointsize=9,units="in",res=300)
+par(mai=c(0.7,0.3,0.1,0.1),omi=c(0,0.7,0,0),font.main=1,cex.main=1,mfrow=c(1,2))
+plot(dif~swc_pc_syr,data=Mex_cot2,las=1,ylim=c(0.003,0.012),xlim=c(30,85),
+     xlab="Watershed soil water content (%)",ylab="")
+text(85,0.011,"r = -0.17",adj=1)
+text(85,0.010,"p = 0.003",adj=1)
+plot(dif~aet_mm_syr,data=Mex_cot2,las=1,ylim=c(0.003,0.012),xlim=c(400,1100),
+     xlab="Actual evapotranspiration (AET) (mm)",
+     ylab="",yaxt="n")
+axis(2,labels=F)
+text(1100,0.011,"r = -0.20",adj=1)
+text(1100,0.010,"p = 0.0004",adj=1)
+mtext(expression("Oak K"[d]*"-Pine K"[d]*" (d"^-1*")"), side=2, outer=TRUE,line=2,adj=0.7)
+dev.off()
 
 ####################################
 #### Cellulose model validation ####
