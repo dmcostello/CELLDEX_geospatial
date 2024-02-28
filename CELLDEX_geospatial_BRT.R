@@ -981,7 +981,9 @@ pf4<-ggplot(data = nlit, aes(N_Litter_Mn, exp(y))) +
 # Make trellis of the top 4 partial dependence plots
 pdf(file = "Fig3_rev.pdf",width=3.625,height=7)
 #tiff(file="Fig3_rev.tiff",width=3.625,height=7,units="in",res=300)
-grid.arrange(pf1,pf2,pf3,pf4, ncol = 1,left=textGrob(bquote('Litter decomposition rate (K'[d]~" d"^-1*")"),rot=90))
+grid.arrange(pf1,pf2,pf3,pf4, ncol = 1,
+             left=textGrob(bquote('Litter decomposition rate (K'[d]~" d"^-1*")"),
+                           rot=90,gp = gpar(fontsize = 9)))
 dev.off()
 
 #####################################
@@ -1072,12 +1074,14 @@ plot(dif~swc_pc_syr,data=Mex_cot2,las=1,ylim=c(0.003,0.012),xlim=c(30,85),
      xlab="Watershed soil water content (%)",ylab="")
 text(85,0.011,"r = -0.17",adj=1)
 text(85,0.010,"p = 0.003",adj=1)
+text(33,0.0115,expression(bold("A")))
 plot(dif~aet_mm_syr,data=Mex_cot2,las=1,ylim=c(0.003,0.012),xlim=c(400,1100),
      xlab="Actual evapotranspiration (AET) (mm)",
      ylab="",yaxt="n")
 axis(2,labels=F)
 text(1100,0.011,"r = -0.20",adj=1)
 text(1100,0.010,"p = 0.0004",adj=1)
+text(450,0.0115,expression(bold("B")))
 mtext(expression("Oak K"[d]*"-Pine K"[d]*" (d"^-1*")"), side=2, outer=TRUE,line=2,adj=0.7)
 dev.off()
 
