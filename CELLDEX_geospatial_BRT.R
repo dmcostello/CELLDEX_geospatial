@@ -19,6 +19,7 @@ library(leaflet)
 library(Hmisc)
 library(caret)
 library(Metrics)
+library(viridis)
 
 set.seed(15)
 
@@ -126,7 +127,7 @@ TPdep_interp <- raster::interpolate(r, TPdep)
 
 basins<-st_read("BasinATLAS_v10_lev12.shp")
 
-# Transform subwatershed polygons to equal distance Mollenweide projection
+# Transform subwatershed polygons to equal distance Mollweide projection
 bas_moll <- st_transform(basins, "+proj=moll")
 
 
@@ -377,7 +378,7 @@ global_kd <- setValues(gr,values)
 # Shape file can be downloaded at https://www.worldwildlife.org/publications/global-lakes-and-wetlands-database-large-lake-polygons-level-1
 #lakes <- glwd_load(level = 1) broken package
 lakes <- st_read("./GLWD_level1/glwd_1.shp")
-global_kd<-mask(global_kd,lakes,inverse=T)
+global_kd<-raster::mask(global_kd,lakes,inverse=T)
 
 #writeRaster(global_kd,"global_kd.tif")
 
@@ -563,7 +564,8 @@ mtymap <- readPNG("mtymap.png")
 # Make partial dependence plots in ggplot
 ps1 <- ggplot(data = meantemp, aes(mean_mean_daily_temp, exp(y))) +
   ggpubr::background_image(streamtempmap)+
-  geom_line(color = "steelblue", size = 1) +
+  geom_line(color = "white", size = 1.5) +
+  geom_line(color = "black", size = 1) +
   ylab("") + ylim(c(0.007,0.027)) + xlim(c(0,31))+
   annotate("text", x = min(meantemp$mean_mean_daily_temp), y=0.026, label = "A",fontface="bold") +
   xlab(expression(x="Mean daily stream temp during deployment ("*degree*"C)")) +
@@ -577,7 +579,8 @@ ps1 <- ggplot(data = meantemp, aes(mean_mean_daily_temp, exp(y))) +
 
 ps2 <- ggplot(data = limn, aes(log10lka_pc_sse, exp(y))) +
   ggpubr::background_image(limnmap)+
-  geom_line(color = "steelblue", size = 1) +
+  geom_line(color = "white", size = 1.5) +
+  geom_line(color = "black", size = 1) +
   ylab("") +
   annotate("text", x = min(limn$log10lka_pc_sse), y=0.026, label = "B",fontface="bold") +
   xlab("Subwatershed lake area+1 (%)") +
@@ -594,7 +597,8 @@ ps2 <- ggplot(data = limn, aes(log10lka_pc_sse, exp(y))) +
 
 ps3 <- ggplot(data = no3[no3$log10NO3c>-2,], aes(log10NO3c, exp(y))) +
   ggpubr::background_image(NO3map)+
-  geom_line(color = "steelblue", size = 1) +
+  geom_line(color = "white", size = 1.5) +
+  geom_line(color = "black", size = 1) +
   ylab("") +
   annotate("text", x = -2, y=0.026, label = "C",fontface="bold") +
   xlab(expression("Stream NO"[3]*"+NO"[2]~"yield (kg ha"^"-1"~"yr"^"-1"*")")) +
@@ -611,7 +615,8 @@ ps3 <- ggplot(data = no3[no3$log10NO3c>-2,], aes(log10NO3c, exp(y))) +
 
 ps4 <- ggplot(data = drp, aes(log10DRPc, exp(y))) +
   ggpubr::background_image(DRPmap)+
-  geom_line(color = "steelblue", size = 1) +
+  geom_line(color = "white", size = 1.5) +
+  geom_line(color = "black", size = 1) +
   ylab("") +
   annotate("text", x = min(drp$log10DRPc), y=0.026, label = "D",fontface="bold") +
   xlab(expression("Stream DRP yield (kg ha"^"-1"~"yr"^"-1"*")")) +
@@ -629,7 +634,8 @@ ps4 <- ggplot(data = drp, aes(log10DRPc, exp(y))) +
 
 ps5 <- ggplot(data = aet, aes(AETmonth, exp(y))) +
   ggpubr::background_image(AETmap)+
-  geom_line(color = "steelblue", size = 1) +
+  geom_line(color = "white", size = 1.5) +
+  geom_line(color = "black", size = 1) +
   ylab("") + ylim(c(0.007,0.027)) + xlim(c(3,150)) +
   annotate("text", x = min(aet$AETmonth), y=0.026, label = "E",fontface="bold") +
   xlab(expression(x="AET during month of deployment (mm)")) +
@@ -644,7 +650,8 @@ ps5 <- ggplot(data = aet, aes(AETmonth, exp(y))) +
 
 ps6<-ggplot(data = mty, aes(tmp_dc_uyr, exp(y))) +
   ggpubr::background_image(mtymap)+
-   geom_line(color = "steelblue", size = 1) +
+  geom_line(color = "white", size = 1.5) +
+  geom_line(color = "black", size = 1) +
   ylab("") + ylim(c(0.007,0.027)) + xlim(c(-12,28))+
   annotate("text", x = min(mty$tmp_dc_uyr), y=0.026, label = "F",fontface="bold") +
   xlab(expression(x="Mean annual air temperature ("*degree*"C)")) +
@@ -690,10 +697,10 @@ gr3<-gr3*0
 # not predict stream Kd for including Antarctica and set value to the minimum value 
 # of predicted ln stream Kd from our model
 min_predkd <- min(grv2$gl_kd,na.rm=T)
-global_kd<-mask(global_kd, inverse=T,gr2,updatevalue=min_predkd,updateNA=T)
-global_kd<-mask(global_kd, inverse=T,gr3,updatevalue=min_predkd,updateNA=T)
+global_kd<-raster::mask(global_kd, inverse=T,gr2,updatevalue=min_predkd,updateNA=T)
+global_kd<-raster::mask(global_kd, inverse=T,gr3,updatevalue=min_predkd,updateNA=T)
 
-# Predicted global kd raster projected in Mollenweide
+# Predicted global kd raster projected in Mollweide
 glkd_moll<-projectRaster(global_kd,crs="+proj=moll")
 
 # Make dataframe of ln mean stream Kd raster and create column of 0s to represent watersheds with predictions
@@ -716,7 +723,7 @@ colnames(xy)<-c("x","y","temp")
 
 # Make map figures in ggplot
 map<-ggplot() + borders(fill="lightgray") + geom_raster(data = mask_glkd , aes(x = x, y = y,fill = ln.Mean.Stream.Kd)) + 
-  scale_fill_gradientn(colors=rev(c("black","darkred", "red", "orange", "yellow","darkgreen","darkolivegreen3","darkolivegreen2", "lightgreen","blue","violet","lightgray")),
+  scale_fill_gradientn(colors=c("lightgray",turbo(6)),
                        na.value=NA,name=bquote('Cellulose K'[d]~" (d"^-1*")"),
                        labels=c(NA,0.005,0.01,0.02,0.03,0.05,0.08),
                        breaks=log(c(0.003,0.005,0.01,0.02,0.03,0.05,0.08)),limits=c(log(0.003),log(0.08)))+
@@ -726,20 +733,9 @@ map<-ggplot() + borders(fill="lightgray") + geom_raster(data = mask_glkd , aes(x
   theme(axis.text.x=element_blank()) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   theme(axis.ticks.x=element_blank()) + theme(axis.ticks.y=element_blank()) + theme(axis.text.y=element_blank())  
 
-CBmap <- ggplot() + borders(fill="lightgray") + geom_raster(data = mask_glkd , aes(x = x, y = y,fill = ln.Mean.Stream.Kd)) + 
-  scale_fill_gradientn(colors=c("lightgray","#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7"),
-                       na.value=NA,name=bquote('Cellulose K'[d]~" (d"^-1*")"),
-                       labels=c(NA,0.005,0.007,0.012,0.02,0.03,0.05,0.08),
-                       breaks=log(c(0.003,0.005,0.007,0.012,0.02,0.03,0.05,0.08)),limits=c(log(0.003),log(0.08)))+
-  xlab("") + ylab("") + theme(legend.position = c(0.1, 0.75),legend.box.background = element_blank(),
-                              legend.background = element_blank(),legend.title = element_text(size=9),legend.text = element_text(size=9)) + 
-  theme(panel.background = element_rect(fill = "white",colour = "white",size = 1, linetype = "solid")) +
-  theme(axis.text.x=element_blank()) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  theme(axis.ticks.x=element_blank()) + theme(axis.ticks.y=element_blank()) + theme(axis.text.y=element_blank())  
-
 inset<-ggplot() + geom_tile(data = dplyr::filter(mask_glkd, !is.na(land)),aes(x = x, y = y), fill = "cornsilk2") +
-  geom_point(data=xy,aes(x=x,y=y),col="lightcoral",fill="lightcoral",size=0.6,shape=21) + 
-  geom_point(data=fsxy,aes(x=x,y=y),col="honeydew4",fill="transparent",size=1,shape=21,stroke=0.3) +
+  geom_point(data=xy,aes(x=x,y=y),col="#FFEA46FF",fill="#FFEA46FF",size=0.6,shape=21) + 
+  geom_point(data=fsxy,aes(x=x,y=y),col="#00204DFF",fill="transparent",size=1,shape=21,stroke=0.3) +
   xlab("") + ylab("") + 
   theme(legend.position = "none",legend.box.background = element_blank(),legend.background = element_blank()) + 
   theme(
@@ -753,21 +749,14 @@ inset<-ggplot() + geom_tile(data = dplyr::filter(mask_glkd, !is.na(land)),aes(x 
     axis.ticks.y=element_blank(), 
     axis.text.y=element_blank(),
     axis.text.x=element_blank(),
-    panel.border = element_rect(colour = "black", fill=NA, size=0.5)
+    panel.border = element_rect(colour = "grey80", fill=NA, size=0.5)
   )
 
 # Publication map
 pdf("Fig2_rev.pdf",width=7.25,height=5)
 #tiff(file="Fig2_rev.tiff",width=7.25,height=5,units="in",res=300)
 plot(map)
-print(inset,vp=viewport(width=0.3,height=0.3,x=0,y=0.28,just="left"))
-dev.off()
-
-# Supplemental color blind-friendly map 
-pdf("CB_map.pdf",width=7.25,height=5)
-#tiff("CB_map.tiff",width=7.25,height=5,units="in",res=300)
-plot(CBmap)
-print(inset,vp=viewport(width=0.3,height=0.3,x=0,y=0.28,just="left"))
+print(inset,vp=viewport(width=0.3,height=0.3,x=0.03,y=0.32,just="left"))
 dev.off()
 
 #Background predictor maps
@@ -794,7 +783,7 @@ mtr_moll <- projectRaster(mtr,crs="+proj=moll")
 mtrm <- as.data.frame(mtr_moll,xy=TRUE)
 mtrm$trans <- mtrm$layer/10
 
-#Mollenweide boundaries
+#Mollweide boundaries
 mapx <- c(-1.2e7,1.5e7)
 mapy <- c(-7.5e6,8.7e6)
 
@@ -803,7 +792,7 @@ png(file="streamtempmap.png",width=4,height=3,units="in",res=300,bg="transparent
 ggplot(data=xy,aes(x=x,y=y)) + 
   geom_tile(data = dplyr::filter(mask_glkd, !is.na(land)),aes(x = x, y = y), fill = "grey90") +
   geom_point(aes(colour = temp)) + 
-  scale_colour_gradientn(na.value = "grey",colours = terrain.colors(4)) +
+  scale_colour_gradientn(na.value = "grey",colours = viridis(4)) +
   theme(legend.position = c(0.5,-0.05),legend.direction = "horizontal",
         legend.key.width = unit(0.2,units="npc"),legend.key.height = unit(0.06,units="npc"),
         legend.background =element_blank(),legend.title = element_blank(),legend.box.just = "bottom")+
@@ -819,8 +808,8 @@ ggplot() +
   geom_tile(data = dplyr::filter(mask_glkd, !is.na(land)),aes(x = x, y = y), fill = "grey90") +
   geom_raster(data = lkarm , aes(x = x, y = y,fill = trans))+
   ylim(mapy) + xlim(mapx) +
-  scale_fill_gradientn(na.value = NA,colours = terrain.colors(4),
-                       limits=c(min(Cdat$log10lka_pc_sse,na.rm=T),0.3)) +
+  scale_fill_gradientn(na.value = NA,colours = viridis(4),
+                       limits=c(min(Cdat$log10lka_pc_sse,na.rm=T),2)) +
   theme(legend.position = c(0.5,-0.05),legend.direction = "horizontal",
         legend.key.width = unit(0.2,units="npc"),legend.key.height = unit(0.06,units="npc"),
         legend.background =element_blank(),legend.title = element_blank(),legend.box.just = "bottom")+
@@ -836,7 +825,7 @@ ggplot() +
   geom_tile(data = dplyr::filter(mask_glkd, !is.na(land)),aes(x = x, y = y), fill = "grey90") +
   geom_raster(data = DRPm , aes(x = x, y = y,fill = log10(DRP_Conc)))+
   ylim(mapy) + xlim(mapx) +
-  scale_fill_gradientn(na.value = NA,colours = terrain.colors(4),
+  scale_fill_gradientn(na.value = NA,colours = viridis(4),
                        limits=c(min(Cdat$log10DRPc,na.rm=T),max(Cdat$log10DRPc,na.rm=T))) +
   theme(legend.position = c(0.5,-0.05),legend.direction = "horizontal",
         legend.key.width = unit(0.2,units="npc"),legend.key.height = unit(0.06,units="npc"),
@@ -853,7 +842,7 @@ ggplot() +
   geom_tile(data = dplyr::filter(mask_glkd, !is.na(land)),aes(x = x, y = y), fill = "grey90") +
   geom_raster(data = NO3m , aes(x = x, y = y,fill = log10(Band_1)))+
   ylim(mapy) + xlim(mapx) +
-  scale_fill_gradientn(na.value = NA,colours = terrain.colors(4),
+  scale_fill_gradientn(na.value = NA,colours = viridis(4),
                        limits=c(quantile(Cdat$log10NO3c,0.01,na.rm=T),max(Cdat$log10NO3c,na.rm=T))) +
   theme(legend.position = c(0.5,-0.05),legend.direction = "horizontal",
         legend.key.width = unit(0.2,units="npc"),legend.key.height = unit(0.06,units="npc"),
@@ -869,7 +858,7 @@ png(file="AETmap.png",width=4,height=3,units="in",res=300,bg="transparent")
 ggplot(data=AET_moll,aes(x=x,y=y)) + 
   geom_tile(data = dplyr::filter(mask_glkd, !is.na(land)),aes(x = x, y = y), fill = "grey90") +
   geom_point(aes(colour = AETmonth)) + 
-  scale_colour_gradientn(na.value = "grey",colours = terrain.colors(4)) +
+  scale_colour_gradientn(na.value = "grey",colours = viridis(4)) +
   theme(legend.position = c(0.5,-0.05),legend.direction = "horizontal",
         legend.key.width = unit(0.2,units="npc"),legend.key.height = unit(0.06,units="npc"),
         legend.background =element_blank(),legend.title = element_blank(),legend.box.just = "bottom")+
@@ -885,8 +874,7 @@ ggplot() +
   geom_tile(data = dplyr::filter(mask_glkd, !is.na(land)),aes(x = x, y = y), fill = "grey90") +
   geom_raster(data = mtrm , aes(x = x, y = y,fill = trans))+
   ylim(mapy) + xlim(mapx) +
-  scale_fill_gradientn(na.value = NA,colours = terrain.colors(4),
-                       limits=c(min(Cdat$tmp_dc_uyr,na.rm=T),max(Cdat$tmp_dc_uyr,na.rm=T))) +
+  scale_fill_gradientn(na.value = NA,colours = viridis(4)) +
   theme(legend.position = c(0.5,-0.05),legend.direction = "horizontal",
         legend.key.width = unit(0.2,units="npc"),legend.key.height = unit(0.06,units="npc"),
         legend.background =element_blank(),legend.title = element_blank(),legend.box.just = "bottom")+
@@ -1001,14 +989,14 @@ names(pine)[2:3] <- c("Long","Lat")
 
 #Map invasion risk
 leaflet(elementId = "map") %>% 
-  addProviderTiles(providers$Esri.WorldTopoMap) %>%
+  addProviderTiles(providers$USGS.USTopo) %>%
   addCircleMarkers(data = pine[pine$beetle=="0",], lat =  ~Lat, lng =~Long,
-                   color = "#1b9e77",
-                   radius = 3, stroke = FALSE, fillOpacity = 1) %>%
+                   color = "#009E73",
+                   radius = 3, stroke = FALSE, fillOpacity = 0.6) %>%
   addCircleMarkers(data = pine[pine$beetle=="1",], lat =  ~Lat, lng =~Long,
-                   color = "orangered",
-                   radius = 3, stroke = FALSE, fillOpacity = 1) %>%
-  addLegend("topright",colors = c("#1b9e77","orangered"),
+                   color = "orange",
+                   radius = 3, stroke = FALSE, fillOpacity = 0.6) %>%
+  addLegend("topright",colors = c("#009E73","orange"),
             labels=c("No-Low","Moderate-High"),opacity=1,title ="Risk of invasion")
 
 #Predict cotton decay
@@ -1036,16 +1024,16 @@ den_pine <- density(Mex_pine,na.rm=T)
 #Plotting
 pdf(file="Mex.pdf",width=3.5,height=4)
 par(mar=c(4,3,1,1))
-with(den_oak,plot(x,y,type="l",lwd=3,col="orangered",lty=2,xlim=c(0,0.015),
-                  las=1,ylim=c(0,800),yaxt="n",
+with(den_oak,plot(x,y,type="l",lwd=3,col="orange",lty=2,xlim=c(0,0.015),
+                  las=1,ylim=c(0,900),yaxt="n",
                   ylab="",xlab=expression("Decomposition rate (d"^-1~")"),cex.lab=1.5))
 mtext("Relative frequency",side=2,line=1,cex=1.5)
-with(den_pine,lines(x,y,lwd=3,col="forestgreen"))
+with(den_pine,lines(x,y,lwd=3,col="#009E73"))
 legend("topright",cex=1.2,
        legend=c(substitute(paste(italic("Pinus"))),
                 substitute(paste(italic("Quercus")))),
        lwd=3,lty=c(1,2),
-       col=c("forestgreen","orangered"),text.col = c("forestgreen","orangered"))
+       col=c("#009E73","orange"),text.col = c("#009E73","orange"))
 dev.off()
 
 # More variation in oak than pine. What best predicts the difference between pine and oak?
