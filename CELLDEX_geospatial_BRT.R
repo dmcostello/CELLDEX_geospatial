@@ -1053,10 +1053,10 @@ with(Mex_cot2,cor.test(dif,cmi_ix_syr))
 with(Mex_cot2,cor.test(dif,aet_mm_syr))
 with(Mex_cot2,cor.test(dif,swc_pc_syr))
 
-### Supplemental Figure 2 ###
+### Supplemental Figure 1 ###
 
-pdf(file="FigS2_corr.pdf",height=3,width=6, pointsize=9)
-#tiff(file="FigS2_corr.tiff",height=3,width=6, pointsize=9,units="in",res=300)
+pdf(file="FigS1_corr.pdf",height=3,width=6, pointsize=9)
+#tiff(file="FigS1_corr.tiff",height=3,width=6, pointsize=9,units="in",res=300)
 par(mai=c(0.7,0.3,0.1,0.1),omi=c(0,0.7,0,0),font.main=1,cex.main=1,mfrow=c(1,2))
 plot(dif~swc_pc_syr,data=Mex_cot2,las=1,ylim=c(0.003,0.012),xlim=c(30,85),
      xlab="Watershed soil water content (%)",ylab="")
