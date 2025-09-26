@@ -1,6 +1,6 @@
 # CELLDEX geospatial
 Data and code for geospatial modeling of CELLDEX data
-Tiegs et al. *Predicting global organic-matter decomposition in flowing waters*.
+Tiegs et al. *Human activities shape global patterns of decomposition rates in rivers*.
 
 ## List of all files in repository
 
